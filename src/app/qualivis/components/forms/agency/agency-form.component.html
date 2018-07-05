@@ -1,0 +1,80 @@
+<form action="submit" class="form-agency" 
+  [ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+  applicationStatus=='approved') ? 'form-disabled' : '', 
+  role =='admin' &&
+  applicationStatus!='pending' ? 'form-disabled' : '' 
+  ]" 
+ [formGroup]='agencyForm'>
+  <div class="row">
+
+    <div class="col-12 col-md-12 mt-3 mb-1">
+      <h4 class="bold mb-0">Agreement</h4>
+      <a href="{{downloadPath}}QualivisStaffingVendorAgreement2018-2020.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+    </div>
+
+
+    <div class="col-12 mt-3 mb-2"  [ngClass]="{'form-disabled':applicationStatus=='pending'}">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.executiveSummary && applicationError.agency.executiveSummary.isReplaced? 'text-danger': '' ]">Executive Summary : 
+        <img *ngIf="helpMessages['EXECUTIVE_SUMMARY']" popover="{{helpMessages['EXECUTIVE_SUMMARY']}}" [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="click hover">
+        <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.executiveSummary && applicationError.agency.executiveSummary.isReplaced" popover="{{applicationError.agency.executiveSummary.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+      </h4>
+      <div class="form-group row textarea">
+        <div class="col-sm-12">
+          <textarea placeholder="{{helpMessages['EXECUTIVE_SUMMARY']}}"
+            name="summary" id="" cols="30" rows="4" class="form-control" maxlength="4096" [formControl]="agencyForm.controls['summary']"></textarea>
+          <p class="error-msg" *ngIf="agencyForm.controls['summary'].dirty && agencyForm.controls['summary'].hasError('required')">{{messages['SUMMARY_REQ']}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- col-12 col-md-6 -->
+
+    <div class="col-12 mt-3 mb-2"  [ngClass]="{'form-disabled':applicationStatus=='pending'}">
+      <h4  [ngClass]="[applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.corporateBackground && applicationError.agency.corporateBackground.isReplaced? 'text-danger': '' ]">Corporate Background & Experience : 
+        <img *ngIf="helpMessages['CORPORATE_BACKGROUND']" popover="{{helpMessages['CORPORATE_BACKGROUND']}}" [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="click hover">
+        <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.corporateBackground && applicationError.agency.corporateBackground.isReplaced" popover="{{applicationError.agency.corporateBackground.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+      </h4>
+      <div class="form-group row textarea">
+        <div class="col-sm-12">
+          <textarea name="background" id="" cols="30" rows="4" class="form-control" maxlength="4096" [formControl]="agencyForm.controls['background']" placeholder="{{helpMessages['CORPORATE_BACKGROUND']}}"></textarea>
+          <p class="error-msg" *ngIf="agencyForm.controls['background'].dirty && agencyForm.controls['background'].hasError('required')">{{messages['BACKGROUND_REQ']}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- col-12 col-md-6 -->
+
+    <div class="col-12 mb-2"  [ngClass]="{'form-disabled':applicationStatus=='pending'}">
+      <h4  [ngClass]="[applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.performancePlan && applicationError.agency.performancePlan.isReplaced? 'text-danger': '' ]">Performance Improvement Plan:
+        <img *ngIf="helpMessages['PERFORMANCE_IMPROVEMENT']" popover="{{helpMessages['PERFORMANCE_IMPROVEMENT']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover">
+        <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('agency')!=-1 && applicationError && applicationError.agency && applicationError.agency.performancePlan && applicationError.agency.performancePlan.isReplaced" popover="{{applicationError.agency.performancePlan.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+      </h4>
+      <div class="form-group row textarea">
+        <div class="col-sm-12">
+          <textarea name="improvement" id="" cols="30" rows="4" class="form-control" maxlength="4096" [formControl]="agencyForm.controls['improvement']" placeholder="{{helpMessages['PERFORMANCE_IMPROVEMENT']}}"></textarea>
+          <p class="error-msg" *ngIf="agencyForm.controls['improvement'].dirty && agencyForm.controls['improvement'].hasError('required')">{{messages['IMPROVEMENT_REQ']}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- col-12 col-md-6 -->
+    <div class="col-12"  [ngClass]="{'form-disabled':applicationStatus=='pending'}"></div>
+  </div>
+
+  <div class="row">
+			<!-- TECHINCAL DEBT -->
+			<div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+			<ng-template #thenBlock>
+				<div class="col-12 form-btn" *ngIf="showActionBtn">
+					<button type="button" class="btn btn-primary"  [disabled]="true">Application Closed</button>
+				</div>
+			</ng-template>
+			<ng-template #elseBlock>
+
+
+    <div class="col-12 form-btn mt-5" *ngIf="showActionBtn">
+      <button type="button" class="btn btn-primary" (click)="redirectTo()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="submitAgencyInfo()">Save / Exit</button>
+      <button type="button" class="btn btn-primary" (click)="submitAgencyInfo(true)">Next</button>
+    </div>
+
+    </ng-template>	
+  </div>
+</form>

@@ -1,0 +1,143 @@
+<main class="mt-8" role="main">
+  <!-- breadcrumb header section -->
+  <div class="header-section d-flex align-items-center">
+    <div class="container">
+      <div class="row d-flex justify-content-between  align-items-center">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Library</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Data</li>
+          </ol>
+        </nav>
+        <button type="button" class="btn btn-primary"  (click)="openModalWithClass(template)">+ Add Patient</button>      
+      </div>
+    </div>
+  </div>
+  <!-- breadcrumb header section end -->
+ 
+   <!-- table short header section start -->
+   <div class="border-bottom">
+    <div class="container">
+      <div class="py-3 row d-flex justify-content-between  align-items-center">
+        <div class="w-25 d-flex  justify-content-between align-items-center ">
+          <span class="mr-auto p-2">20 Results</span>
+          <span>Unit/Floor:</span>
+          <div class="btn-group">
+            <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ALL
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Separated link</a>
+            </div>
+          </div>
+        </div>
+        <div class="w-25 d-flex  justify-content-between ">
+            <span>Sort By:</span>
+            <span>Date Added</span>
+            <span>|</span>
+            <span>Name</span>
+          </div>   
+      </div>
+    </div>
+  </div>
+   <!-- table short header section start -->
+   <div class="table-header">
+    <div class="container">
+      <div class="py-3 row data-head d-flex justify-content-between  align-items-center">
+        <div class="head">Name</div>
+        <div class="head">MRN</div>
+        <div class="head">DOB</div>
+        <div class="head">Payer Source</div>
+        <div class="head">Cadre Health ID</div>
+        <div class="head">Unit/Floor</div>
+      </div>
+      <div class="py-3 row data-row d-flex justify-content-between  align-items-center">
+        <div class="head">Name</div>
+        <div class="head">MRN</div>
+        <div class="head">DOB</div>
+        <div class="head">Payer Source</div>
+        <div class="head">Cadre Health ID</div>
+        <div class="head"><button type="button" class="btn btn-primary">Primary</button></div>
+      </div>
+      <div class="py-3 row data-row d-flex justify-content-between  align-items-center">
+          <div class="head">Name</div>
+          <div class="head">MRN</div>
+          <div class="head">DOB</div>
+          <div class="head">Payer Source</div>
+          <div class="head">Cadre Health ID</div>
+          <div class="head"><button type="button" class="btn btn-primary">Primary</button></div>
+        </div>
+        <div class="py-3 row data-row d-flex justify-content-between  align-items-center">
+            <div class="head">Name</div>
+            <div class="head">MRN</div>
+            <div class="head">DOB</div>
+            <div class="head">Payer Source</div>
+            <div class="head">Cadre Health ID</div>
+            <div class="head"><button type="button" class="btn btn-primary">Primary</button></div>
+          </div>
+          </div>
+  </div>
+</main>
+
+<ng-template #template>
+  <div class="modal-header border-bottom-0">
+    <h4 class="modal-title pull-left border-bottom w-100">Modal</h4>
+    <button type="button" class="close pull-right position-absolute" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputEmail4">First Name</label>
+          <input type="text" class="form-control" id="inputEmail4" >
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputEmail5">Last Name</label>
+          <input type="text" class="form-control" id="inputEmail5">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="inputEmail4">Date of birth</label>
+          <input type="text" class="form-control" id="inputEmail4" placeholder="--/--/--/">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="inputEmail4">SSN</label>
+          <input type="text" class="form-control" id="inputEmail4" placeholder="------">
+        </div>
+      </div>
+      <div class="form-row w-100">
+        <span *ngIf="isModalShown">+ Assign to a floor/unit (optional)</span>
+        <div class="select-floor-box">
+          <span>+ Create floor/unit tag</span>
+          <div class="d-flex mt-3  align-items-center justify-content-start w-100">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="mr-2">Floot/unit name</span>
+              <input type="text" class="form-control mr-3">
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="mr-2">Select a color</span>
+              <span class="color-box"></span>
+              <span class="color-box"></span>
+              <span class="color-box"></span>
+              <span class="color-box"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+      <button type="submit" class="btn mr-2 btn-outline-secondary ">Cancel</button>
+      <button type="submit" class="btn btn-primary">Add Patient</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

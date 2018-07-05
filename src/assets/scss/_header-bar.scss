@@ -1,0 +1,14 @@
+.header-section{
+  background: $white;
+  height: 60px;
+  .breadcrumb{
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    .breadcrumb-item + .breadcrumb-item{
+      &:before{
+        content: '|'
+      }
+    }
+  }
+}

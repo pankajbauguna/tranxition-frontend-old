@@ -1,0 +1,62 @@
+<div class="center-form">
+  <form action="submit" [formGroup]='applicationResetForm' (ngSubmit)="searchApplication(applicationResetForm.value)"  class="form-signin">
+      <p class="forgot-password">You must enter at least one character to search application.</p>
+      <div class="form-group">
+          <label for="agencyName" class="sr-only">Agency Name</label>
+          <input type="text" id="agencyName" class="form-control" placeholder="Enter Agency Name or Reference Number" [formControl]="applicationResetForm.controls['agencyName']">
+      </div>
+      <button class="btn btn-primary" [disabled]="!applicationResetForm.valid" type="submit">Submit</button>
+  </form>
+</div>
+<div class="row">
+  <!-- <div class="col-sm-12 mt-3 mb-3 no-record" *ngIf="isServerResponse && applications.length==0">
+      <p class="text-primary">No Application found.</p>
+  </div> -->
+  <div class="col-sm-12 mt-5 mb-3" *ngIf="isServerResponse">
+   
+    <div>
+      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event,comfirmationTemplate)" [rows]="tableRows"
+        [columns]="columns"></ng-table>
+      <div class="no-record" *ngIf="applications.length==0">No Application Found.</div>
+      
+      <div class="new-pagination" *ngIf="config.paging&&applications.length!==0">
+        <pagination class="pagination-sm" [totalItems]="length" [itemsPerPage]="itemsPerPage" [maxSize]="maxSize"
+          [boundaryLinks]="true" [rotate]="false" (pageChanged)="onChangeTable(config, $event)" (numPages)="numPages = $event"></pagination>
+        
+        <div class="btn-group" dropdown>
+          <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
+            {{pagerLabel}} entities per page
+            <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem" *ngFor="let option of pagerOptions" (click)="pagerLabel=option.itemsPerPage=='all'?'All':option.itemsPerPage;onChangeTable(config, { page: this.page, itemsPerPage: option.itemsPerPage }, true)">
+              <a class="dropdown-item">{{option.itemsPerPage}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #comfirmationTemplate >
+    <div class="modal-body text-center">
+      <p>{{resetActionLabel}} Application?</p>
+      <button type="button" class="btn btn-primary" (click)="confirm(captchaTemplate)">Yes</button>
+      <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+    </div>
+</ng-template>
+
+<ng-template #captchaTemplate>
+  <div class="modal-body" >
+    <p>Resolve the captcha below.</p>
+    <div class="captcha">
+        <span>{{first}} + {{second}}</span> = <input type="text" id="sumCaluclation" class="form-control" placeholder="" [formControl]="applicationResetForm.controls['calCulatedValue']">
+        <span *ngIf="isWrongAnswer" class="error-msg error-msg-nxt"> Wrong Answer </span>
+      </div>
+    
+    <button type="button" class="btn btn-primary" (click)="solveCaptcha()">Submit</button>
+    <button type="button" class="btn btn-primary" (click)="declineCaptcha()">Cancel</button>
+  </div>
+</ng-template>

@@ -1,0 +1,92 @@
+<app-header [role]="role" [userName]="userName"></app-header>
+<div class="container-fluid fixed-sub-header">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="main-head row" *ngIf="pathName !== routes['change-username'] && pathName !== routes['change-password'] && pathName !== routes['thanks']">
+					<div class="col-xs-12 col-md-8" *ngIf="!noApplicationDataFound">
+						 {{ role !== 'admin' ? 'New ' : ''}} Application |
+						<span class="active" title="{{ !isExistingAgency ?  (agencyName ? agencyName : 'New Application') : agencyName }}">
+							{{ !isExistingAgency ? (agencyName ? agencyName : 'New Application') : agencyName }}
+						</span>
+					</div>
+					<div class="col-xs-12 col-md-4 text-right" *ngIf="pathName !== routes['review'] && pathName !== routes['upload-docs'] && pathName !== routes['info']">
+						<span class='required-text'>**All Fields Required Unless Labeled Optional</span>
+					</div>
+				</div>
+				<div class="main-head text-center"  *ngIf="pathName === routes['change-password']">Change Password</div>
+				<div class="main-head text-center"  *ngIf="pathName === routes['change-username']">Change Username</div>
+			</div>
+		</div> 
+		<div class="row btn-tab" *ngIf="pathName !== routes['change-username'] && pathName !== routes['change-password'] && pathName !== routes['thanks'] && pathName !== routes['admin-review']">
+			<div class="col-12 pb-2" *ngIf="!showAdminNavigation">
+				<button type="button" class="btn btn-outline" *ngIf="isExistingAgency" [ngClass]="{'active': pathName === routes.info}"
+				 (click)="redirectTo('info')">
+					<fa name="check" aria-hidden="true" *ngIf="filledForms['info']"></fa>
+					Info
+				</button> 
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName === routes['contact-info']}" (click)="redirectTo(routes['contact-info'],'#contactInfo')">
+				    <fa name="exclamation" class="text-danger" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('personal')!=-1"></fa>
+					<fa name="check" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('personal') < 0 && filledForms['contactInfo']"></fa>
+					Contact Info
+				</button>
+				<button type="button" class="btn btn-outline" *ngIf="!isExistingAgency" [ngClass]="{'active': pathName === routes.demographics}" (click)="redirectTo(routes['demographics'],'#demographics')" [disabled]="!filledForms['contactInfo']">
+					<fa name="exclamation" class="text-danger" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('company')!=-1"></fa>
+					<fa name="check" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('company') < 0 && filledForms['company']"></fa>
+					Demographics 
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName === routes.background}" (click)="redirectTo(routes['background'],'#agencyInfo')" [disabled]="!filledForms['company']">
+					<fa name="exclamation" class="text-danger" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('agency')!=-1"></fa>
+					<fa name="check" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('agency') < 0 && filledForms['agency']"></fa>
+					 Background
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName === routes.forms}" (click)="redirectTo(routes['forms'],'#formsInfo')" [disabled]="!filledForms['agency']">
+					<fa name="exclamation" class="text-danger" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('forms')!=-1"></fa>
+					<fa name="check" aria-hidden="true" *ngIf="filledForms['applicationErrorState'] && filledForms['applicationErrorState'].indexOf('forms') < 0 && filledForms['forms']"></fa>
+					Forms
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName === routes['upload-docs']}" (click)="redirectTo(routes['upload-docs'],'#uploadDocsInfo')" [disabled]="!filledForms['forms']">
+					<fa name="exclamation" class="text-danger" aria-hidden="true" *ngIf="docsToReplace"></fa>
+					<fa name="check" aria-hidden="true" *ngIf="!docsToReplace && filledForms['isUploadDocsCompleted']"></fa>
+					{{isExistingAgency ? 'References': 'Upload Docs'}} 
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName === routes.review}" (click)="redirectTo(routes.review)" [disabled]="!filledForms['isUploadDocsCompleted']">
+					Review
+				</button>
+				
+			</div>
+			<!-- <div class="col-12 pb-2 mt-3" *ngIf="showAdminNavigation">
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName == routes['admin-dashboard']}" (click)="redirectTo('admin-dashboard')">
+					Dashboard
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName == routes.applications}" (click)="redirectTo('applications')">
+					Applications
+				</button>
+			</div> -->
+			<div class="main-head col-12 mt-1"  *ngIf="pathName == routes.applications">
+				<div class="grey-bottom-border pb-1">Application | <span class="active">Submitted</span></div>
+			</div>
+			<!-- <div class="col-12 pb-2" *ngIf="showAdminNavigation && pathName == '/user/applications'"> 
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': applicationParam == 'all'}" (click)="redirectTo('applications',{status: 'all'})">
+					View All
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': applicationParam == 'pending'}" (click)="redirectTo('applications',{status:'pending'})">
+					Pending
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': applicationParam == 'returned'}" (click)="redirectTo('applications',{status:'returned'})">
+						Returned
+					</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': applicationParam == 'rejected'}" (click)="redirectTo('applications',{status:'rejected'})">
+					Rejected
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': applicationParam == 'approved'}" (click)="redirectTo('applications',{status:'approved'})">
+					Approved
+				</button>
+			</div> -->
+		</div>
+	</div>
+</div>
+<div class="main-content-area container" [ngClass]="{'pt-small-head': ( pathName == routes['change-password'] || pathName == routes['change-username'] || pathName == routes['thanks'] || pathName =='/user/admin-dashboard' )}">
+		<router-outlet></router-outlet>
+		<!-- <app-applications [applicationParam]="applicationParam"></app-applications> -->
+</div>

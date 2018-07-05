@@ -1,0 +1,14 @@
+.calender-box{
+  input{
+    cursor: pointer;
+  }
+  .calender-icon{
+    position: absolute;
+    top: 44px;
+    right: 11px;
+    font-size: 13px;
+    color: $light-grey;
+    cursor: pointer;
+
+  }
+}

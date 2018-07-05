@@ -1,0 +1,20 @@
+@import "~assets/scss/_fonts.scss";
+@import "~assets/scss/_variables.scss";
+@import "../../../../auth/components/register/register-form.component.scss";
+@import "../change-password/change-password-form.component.scss";
+
+.change-username-attention{
+  span {
+    color: $red;
+  }
+}
+
+.change-username-accept-term{
+  label{
+    line-height: 1.2 !important;
+    text-align: left;
+    padding-left: 30px !important;
+    height: auto !important;
+    font-size: $small-font;
+  }
+}

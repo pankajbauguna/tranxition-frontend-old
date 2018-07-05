@@ -1,0 +1,202 @@
+@import "~assets/scss/_fonts.scss";
+@import "~assets/scss/_variables.scss";
+
+.navbar{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	width: 100%;
+	height: $header-height;
+
+	@media (max-width: $screen-xs-max) {
+		padding: 5px 0;
+		height: 50px;
+	}
+
+	@media (min-width: $screen-xs-max) {
+		padding: 5px 0;
+		height: 60px;
+	}
+}
+.navbar-brand{
+
+	.logo{
+		max-height: 40px;
+
+		@media (max-width: $screen-xs-max) {
+			max-height: 30px;
+		}
+		@media (min-width: $screen-xs-max) {
+			max-height: 35px;
+		}
+	}
+}
+.fixed-sub-header{
+	position: fixed;
+	top: calc(#{$header-height} + 1px);
+	background: $white;
+	z-index: 8;//calc(#{$header-z-index} - 1);
+
+	@media (max-width: $screen-xs-max) {
+		top: calc(50px + 1px);
+		padding: 0;
+	}
+
+	@media (min-width: $screen-xs-max) {
+		top: 61px;
+		padding: 0;
+		.container{
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+}
+.main-head{
+	font: 2rem/1.3 'source_sans_prolight';
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+	> div{
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.active{
+		font-family: 'source_sans_prosemibold';
+	}
+
+	@media (max-width: $screen-xs-max) {
+		font: 1.25rem/1.3 'source_sans_prolight';
+		margin: 0.75rem 0 0.25rem;
+	}
+}
+.main-content-area{
+	padding-top: calc(#{$header-height} + 145px);
+	padding-bottom: $footer-height;
+
+	&.pt-small-head{
+		padding-top: calc(#{$header-height} + 66px);
+	}
+
+	@media (max-width: $screen-xs-max) {
+		padding-top: calc(60px + 141px); // Need to more close look change from 51 to 60
+		padding-bottom: $footer-height;
+		&.pt-small-head{
+			padding-top: 101px;
+			padding-bottom: 0;
+		}
+	}
+	@media (min-width: $screen-xs-max) {
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: 260px; // Need to more close look change from 226 to 260
+		padding-bottom: $footer-height;
+		&.pt-small-head{
+			padding-top: 126px;
+			padding-bottom: 0;
+		}
+	}
+	@media (min-width: $screen-sm-max) {
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: calc(#{$header-height} + 131px);
+		padding-bottom: $footer-height;
+
+		&.pt-small-head{
+			padding-top: calc(#{$header-height} + 66px);
+		}
+	}
+}
+.btn-tab{
+
+	@media (max-width: $screen-xs-max) {
+		margin-top: 0.5rem;
+	}
+	@media (min-width: $screen-xs-max) {
+		margin-top: 0.5rem;
+	}
+
+	.btn-outline{
+		box-shadow: none;
+		margin: .5rem 0.8% 0.5rem 0;
+		min-width: 16%;
+		float: left;
+
+		@media (max-width: $screen-xs-max) {
+			float: none;
+			margin: 0 0.8% 0.5rem 0;
+		}
+		@media (min-width: $screen-xs-max) {
+			float: none;
+			margin: 0 0.8% 0.5rem 0;
+			min-width: 14%;
+		}
+		@media (min-width: $screen-md-max) {
+			margin: .5rem 0.8% 0.5rem 0;
+			min-width: 16%;
+			float: left;
+		}
+
+		&:last-child{
+			margin-right: 0%;
+		}
+
+		&:not([disabled]):not(.disabled):hover {
+		  color: $white;
+
+		  &:focus,
+		  &.focus {
+				color: $white;
+		  }
+		}
+
+		&:focus,
+		&.focus {
+			color: $primary-color;
+		  box-shadow: 0 0 0 0.2rem rgba($primary-color, .5);
+		}
+
+		&:not([disabled]):not(.disabled):active,
+		&:not([disabled]):not(.disabled).active,
+		.show > &.dropdown-toggle {
+		  color: $white;
+		  // Avoid using mixin so we can pass custom focus shadow properly
+		  box-shadow: none;
+
+		  &:focus,
+		  &.focus {
+				box-shadow: 0 0 0 0.2rem rgba($primary-color, .5);
+		  }
+		}
+
+		&:disabled{
+			cursor: initial;
+		}
+	}
+}
+
+.dropdown-toggle{
+
+	&::after{
+		margin-left: 0.5em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.4em solid;
+    border-right: 0.4em solid transparent;
+    border-bottom: 0;
+    border-left: 0.4em solid transparent;
+	}
+}
+.dropdown-item{
+
+	&:focus,
+	&:hover{
+		background: lighten($dark-green, 70)
+	}
+
+	&.active,
+	&:active{
+		color: $black;
+		background: lighten($dark-green, 70)
+	}
+}
+
+

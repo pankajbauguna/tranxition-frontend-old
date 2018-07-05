@@ -1,0 +1,44 @@
+@import "_variables";
+@import "_mixin";
+@import "_fonts";
+@import "_buttons";
+@import "_checkbox";
+@import "_form";
+@import "_mobile";
+@import "_login";
+@import "_modal";
+@import "_dropdown";
+@import "_calender";
+@import "_header-bar";
+@import "_data_table";
+
+/*
+ * Base structure
+ */
+html{
+  height: 100%;
+}
+body {
+  font-family: 'source_sans_proregular';
+  font-size: $normal-font;
+  color: $black;
+  height: 100%;
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  /* Font varient */
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  /* Smoothing */
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
+  background: #f2f2f2;
+}
+.no-flex{
+  flex: none !important;
+}
+.mt-8{
+  margin-top: 80px;
+}

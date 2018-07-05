@@ -1,0 +1,30 @@
+.custom-modal {
+  &.modal-lg{
+    max-width: 1000px;
+    .modal-content{
+      padding: 50px;
+      .position-absolute{
+        top: 15px;
+        right: 15px;
+        font-size: 50px;
+      }
+      .select-floor-box{
+        width: 100%;
+        .form-control{
+          width: 100px;
+        }
+        .color-box{
+          width: 30px;
+          height: 30px;
+          background: red;
+          margin: 0 3px;
+          @include border-radius(6px);
+        }
+      }
+    }
+  }
+  .modal-title {
+    font-size: $sub-sub-heading-font;
+    color: $black;
+  }
+}

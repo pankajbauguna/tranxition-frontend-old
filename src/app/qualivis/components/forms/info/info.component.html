@@ -1,0 +1,45 @@
+<div [ngClass]="{'form-disabled':applicationStatus=='pending' || role=='admin'}">
+  <div class="col-12 mt-3 mb-4">
+    <p class="bold mb-0">Agreement</p>
+    <a href="{{downloadPath}}QualivisStaffingVendorAgreement2018-2020.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+
+  <div class="col-12 mb-4">
+    <p class="bold mb-0">Exhibit C: Qualification of Agency Staff Chart</p>
+    <a href="{{downloadPath}}ExhibitC-QualificationsOfAgencyStaffChart.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+
+  <div class="col-12 mb-4">
+    <p class="bold mb-0">Exhibit E1: Clinical Job Classes</p>
+    <a href="{{downloadPath}}ExhibitE1-ClinicalJobClasses.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+
+  <div class="col-12 mb-4">
+    <p class="bold mb-0">Exhibit E2: Non-Clinical Job Classes</p>
+    <a href="{{downloadPath}}ExhibitE2-NonClinicalJobClasses.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+
+  <div class="col-12 mb-4">
+    <p class="bold mb-0">Exhibit H: Clinical Audit Form</p>
+    <a href="{{downloadPath}}ExhibitH-ClinicalComplianceReviewForm.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+
+  <div class="col-12 mb-4">
+    <p class="bold mb-0">Exhibit I: Non-Clinical Audit Form</p>
+    <a href="{{downloadPath}}ExhibitI-NonClinicalComplianceReviewForm.pdf" download class="big-underline" referrerpolicy='origin'>Download PDF</a>
+  </div>
+</div>
+
+<div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>
+  <div class="col-12 form-btn" *ngIf="showActionBtn">
+    <button type="button" class="btn btn-primary" [disabled]="true">Application Closed</button>
+  </div>
+</ng-template>
+<ng-template #elseBlock>
+<div class="col-12 form-btn" *ngIf="showActionBtn">
+	<button type="button" class="btn btn-primary" (click)="redirectTo()" disabled>Back</button>
+	<button type="button" class="btn btn-primary" (click)="saveExit()">Save / Exit</button>
+	<button type="button" class="btn btn-primary" (click)="redirectTo(true)">Next</button>
+</div>
+</ng-template>

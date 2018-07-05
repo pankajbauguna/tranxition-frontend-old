@@ -1,0 +1,472 @@
+<form action="submit" [ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+applicationStatus=='approved') ? 'form-disabled' : '', 
+role =='admin' &&
+applicationStatus!='pending' ? 'form-disabled' : '' 
+]" 
+[formGroup]='companyForm'>
+  <div class="row">
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.companyInfo && applicationError.company.companyInfo.isReplaced? 'text-danger': '' ]">Company Information:
+        <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.companyInfo && applicationError.company.companyInfo.isReplaced" popover="{{applicationError.company.companyInfo.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span>
+      </h4>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Agency Name</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" placeholder="Example Staffing" [formControl]="controls.name">
+          <p class="error-msg" *ngIf="controls.name.dirty && controls.name.hasError('required')">{{messages['AGENCY_NAME_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label"># of Employees</label>
+        <div class="col-sm-9">
+         <select [formControl]="controls.employeeNumber" id="" class="form-control">
+            <option value="1-10">1-10</option>
+            <option value="11-50">11-50</option>
+            <option value="51-200">51-200</option>
+            <option value="201-500">201-500</option>
+            <option value="501-1,000">501-1,000</option>
+            <option value="1,001-5,000">1,001-5,000</option>
+            <option value="5,001-10,000">5,001-10,000</option>
+            <option value="10,000+">10,000+</option>
+          </select>
+         <p class="error-msg" *ngIf="controls.employeeNumber.dirty && controls.employeeNumber.hasError('required')">{{messages['EMPLOYEES_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Federal Tax ID</label>
+        <div class="col-sm-9">
+          <input type="text"
+         [textMask]="{mask: taxMask}"
+          class="form-control" id="" placeholder="99-9999999" [formControl]="controls.taxId">
+         <p class="error-msg" *ngIf="controls.taxId.dirty && controls.taxId.hasError('required')">{{messages['TAXID_REQ']}}</p>
+         <p *ngIf="controls.taxId.touched && controls.taxId.hasError('invalidFormat') && !controls.taxId.hasError('required') && !controls.taxId.pristine" class="error-msg">{{messages['TAXID_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Website</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                
+          <input type="text" class="form-control" id="" placeholder="www.example.com" [formControl]="controls.website">
+            </div>
+         <p class="error-msg" *ngIf="controls.website.dirty && controls.website.hasError('required')">{{messages['WEBSITE_REQ']}}</p>
+         <p *ngIf="controls.website.touched && controls.website.hasError('invalidFormat') && !controls.website.hasError('required') && !controls.website.pristine" class="error-msg">{{messages['DOMAIN_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.jointCommission && applicationError.company.jointCommission.isReplaced? 'text-danger': '' ]">Joint Commission: <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.jointCommission && applicationError.company.jointCommission.isReplaced" popover="{{applicationError.company.jointCommission.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">TJC ID</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id=""
+          [textMask]="{mask: jcMask}"
+          placeholder="required if known" [formControl]="commissionFB.controls.id">
+         <p class="error-msg" *ngIf="commissionFB.controls.id.dirty &&  commissionFB.controls.id.hasError('invalidFormat') && !commissionFB.controls.id.hasError('required')  && !commissionFB.controls.id.pristine">{{messages['JCAHO_ID_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label" [ngClass]="{optional: !commissionFB.controls.id.value}">Effective Date</label>
+        <div class="input-group col-sm-9">
+          <input type="text" class="form-control" (focus)="commissionEffDP.hide()" #commissionEffDP="bsDatepicker" bsDatepicker triggers="none" [formControl]="commissionFB.controls.effectiveDate" placeholder="MM/DD/YYYY" (onHidden)="setExpirationDate(commissionFB, 'JCAHO')" (blur)="setExpirationDate(commissionFB, 'JCAHO')">
+          <div class="input-group-append" (click)="commissionEffDP.toggle()" [ngStyle]="{'pointer-events': !commissionFB.controls.id.value ? 'none':''}">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="commissionFB.controls.effectiveDate.dirty && commissionFB.controls.effectiveDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="commissionFB.controls.effectiveDate.dirty && commissionFB.controls.effectiveDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label" [ngClass]="{optional: !commissionFB.controls.id.value}">Expiration Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control" (focus)="commissionExDP.hide()" #commissionExDP="bsDatepicker" bsDatepicker triggers="none"  placeholder="MM/DD/YYYY" [formControl]="commissionFB.controls.expirationDate" [minDate]="minExpirationDate">
+          <div class="input-group-append" (click)="commissionExDP.toggle()" [ngStyle]="{'pointer-events': !commissionFB.controls.id.value ? 'none':''}">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="commissionFB.controls.expirationDate.dirty && commissionFB.controls.expirationDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="commissionFB.controls.expirationDate.dirty && commissionFB.controls.expirationDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+          <p class="error-msg" *ngIf="commissionFB.controls.expirationDate.dirty && commissionFB.controls.expirationDate.hasError('notFutureDate')">{{messages['FUTURE_DATE']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.glInsurance && applicationError.company.glInsurance.isReplaced? 'text-danger': '' ]">General Liability Insurer: <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.glInsurance && applicationError.company.glInsurance.isReplaced" popover="{{applicationError.company.glInsurance.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Insurer</label>
+        <div class="col-sm-9">      
+          <div class="input-group">      
+            <input type="text" class="form-control" placeholder="Lockton Companies" [formControl]="glInsuranceFB.controls.insurerName">
+          </div>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.insurerName.dirty && glInsuranceFB.controls.insurerName.hasError('required')">{{messages['INSURER_REQUIRED']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Policy Effective Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control datepicker" (focus)="glPolicyEffDP.hide()" #glPolicyEffDP="bsDatepicker" bsDatepicker triggers="none" [formControl]="glInsuranceFB.controls.effectiveDate" placeholder="MM/DD/YYYY" (onHidden)="setExpirationDate(glInsuranceFB, 'INSURER')" (blur)="setExpirationDate(glInsuranceFB, 'INSURER')">
+          <div class="input-group-append" (click)="glPolicyEffDP.toggle()">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.effectiveDate.dirty && glInsuranceFB.controls.effectiveDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.effectiveDate.dirty && glInsuranceFB.controls.effectiveDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Policy Expiration Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control" (focus)="glPolicyExDP.hide()" #glPolicyExDP="bsDatepicker" bsDatepicker triggers="none"  placeholder="MM/DD/YYYY" [formControl]="glInsuranceFB.controls.expirationDate" [minDate]="minExpirationDate" >
+          <div class="input-group-append" (click)="glPolicyExDP.toggle()">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.expirationDate.dirty && glInsuranceFB.controls.expirationDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.expirationDate.dirty && glInsuranceFB.controls.expirationDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.expirationDate.dirty && glInsuranceFB.controls.expirationDate.hasError('notFutureDate')">{{messages['FUTURE_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Aggregate</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="3,000,000" [formControl]="glInsuranceFB.controls.aggregate">
+          </div>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.aggregate.dirty && glInsuranceFB.controls.aggregate.hasError('required') && !glInsuranceFB.controls.aggregate.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Occurrence</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="1,000,000" [formControl]="glInsuranceFB.controls.occurrence">
+          </div>
+          <p class="error-msg" *ngIf="glInsuranceFB.controls.occurrence.dirty && glInsuranceFB.controls.occurrence.hasError('required') && !glInsuranceFB.controls.occurrence.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Excess Umbrella</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="optional" [formControl]="glInsuranceFB.controls.excessUmbrella">
+          </div>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.plInsurance && applicationError.company.plInsurance.isReplaced? 'text-danger': '' ]">
+        Professional Liability Insurer:
+        <span class="checkbox check-small">
+          <input type="checkbox" class="filled-in" id="plInsurer" [checked]="plInsuranceSameAsGL" (change)="checkBoxAction($event, 'professional-liablility');">
+          <label for="plInsurer">Same as General Liability</label>
+        </span>
+      <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.plInsurance && applicationError.company.plInsurance.isReplaced" popover="{{applicationError.company.plInsurance.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': plInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Insurer</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Lockton Companies" [formControl]="plInsuranceFB.controls.insurerName">
+          </div>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.insurerName.dirty && plInsuranceFB.controls.insurerName.hasError('required')">{{messages['INSURER_REQUIRED']}}</p>
+        </div>
+      </div>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': plInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Policy Effective Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control datepicker" (focus)="plPolicyEffDP.hide()" #plPolicyEffDP="bsDatepicker" bsDatepicker triggers="none" [formControl]="plInsuranceFB.controls.effectiveDate"
+            placeholder="MM/DD/YYYY" (onHidden)="setExpirationDate(plInsuranceFB, 'INSURER')" (blur)="setExpirationDate(plInsuranceFB, 'INSURER')">
+          <div class="input-group-append" (click)="plPolicyEffDP.toggle()" *ngIf="!plInsuranceSameAsGL">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.effectiveDate.dirty && plInsuranceFB.controls.effectiveDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.effectiveDate.dirty && plInsuranceFB.controls.effectiveDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': plInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Policy Expiration Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control" (focus)="plPolicyExDP.hide()" #plPolicyExDP="bsDatepicker" bsDatepicker triggers="none" placeholder="MM/DD/YYYY" [formControl]="plInsuranceFB.controls.expirationDate"
+            [minDate]="minExpirationDate" >
+          <div class="input-group-append" (click)="plPolicyExDP.toggle()" *ngIf="!plInsuranceSameAsGL">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.expirationDate.dirty && plInsuranceFB.controls.expirationDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.expirationDate.dirty && plInsuranceFB.controls.expirationDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.expirationDate.dirty && plInsuranceFB.controls.expirationDate.hasError('notFutureDate')">{{messages['FUTURE_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Aggregate</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend">
+              <span class="dollar-input-group-text">$</span>
+            </span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="3,000,000" [formControl]="plInsuranceFB.controls.aggregate">
+          </div>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.aggregate.dirty && plInsuranceFB.controls.aggregate.hasError('required') && !plInsuranceFB.controls.aggregate.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Occurrence</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend">
+              <span class="dollar-input-group-text">$</span>
+            </span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="1,000,000" [formControl]="plInsuranceFB.controls.occurrence">
+          </div>
+          <p class="error-msg" *ngIf="plInsuranceFB.controls.occurrence.dirty && plInsuranceFB.controls.occurrence.hasError('required') && !plInsuranceFB.controls.occurrence.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.wcInsurance && applicationError.company.wcInsurance.isReplaced? 'text-danger': '' ]">
+        Workers Comp Insurer:
+        <span class="checkbox check-small">
+          <input type="checkbox" class="filled-in" id="wcInsurer" [checked]="wcInsuranceSameAsGL" (change)="checkBoxAction($event, 'workers-comp');">
+          <label for="wcInsurer">Same as General Liability</label>
+        </span>
+      <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.wcInsurance && applicationError.company.wcInsurance.isReplaced" popover="{{applicationError.company.wcInsurance.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': wcInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Insurer</label>
+        <div class="col-sm-9">      
+          <div class="input-group">      
+            <input type="text" class="form-control" placeholder="Lockton Companies" [formControl]="wcInsuranceFB.controls.insurerName">
+          </div>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.insurerName.dirty && wcInsuranceFB.controls.insurerName.hasError('required')">{{messages['INSURER_REQUIRED']}}</p>
+        </div>
+      </div>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': wcInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Policy Effective Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control datepicker" (focus)="wcPolicyEffDP.hide()" #wcPolicyEffDP="bsDatepicker" bsDatepicker triggers="none" [formControl]="wcInsuranceFB.controls.effectiveDate" placeholder="MM/DD/YYYY" (onHidden)="setExpirationDate(wcInsuranceFB, 'INSURER')" (blur)="setExpirationDate(wcInsuranceFB, 'INSURER')">
+          <div class="input-group-append" (click)="wcPolicyEffDP.toggle()" *ngIf="!wcInsuranceSameAsGL">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.effectiveDate.dirty && wcInsuranceFB.controls.effectiveDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.effectiveDate.dirty && wcInsuranceFB.controls.effectiveDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row insurance" [ngClass]="{'back-gray': wcInsuranceSameAsGL}">
+        <label for="" class="col-sm-3 col-form-label">Policy Expiration Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control" (focus)="wcPolicyExDP.hide()" #wcPolicyExDP="bsDatepicker" bsDatepicker triggers="none"  placeholder="MM/DD/YYYY" [formControl]="wcInsuranceFB.controls.expirationDate" >
+          <div class="input-group-append" (click)="wcPolicyExDP.toggle()" *ngIf="!wcInsuranceSameAsGL">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.expirationDate.dirty && wcInsuranceFB.controls.expirationDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.expirationDate.dirty && wcInsuranceFB.controls.expirationDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.expirationDate.dirty && wcInsuranceFB.controls.expirationDate.hasError('notFutureDate')">{{messages['FUTURE_DATE']}}</p>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Occurrence</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="1,000,000" [formControl]="wcInsuranceFB.controls.occurrence">
+          </div>
+          <p class="error-msg" *ngIf="wcInsuranceFB.controls.occurrence.dirty && wcInsuranceFB.controls.occurrence.hasError('required') && !wcInsuranceFB.controls.occurrence.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationError && applicationError.company && applicationError.company.eoInsurance && applicationError.company.eoInsurance.isReplaced? 'text-danger': '' ]">Errors & Omissions Insurer <span class="optional">(non-medical staff only):</span> <span class="sticky-note" *ngIf="applicationError && applicationError.company && applicationError.company.eoInsurance && applicationError.company.eoInsurance.isReplaced" popover="{{applicationError.company.eoInsurance.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Name</label>
+        <div class="col-sm-9">      
+          <div class="input-group">      
+            <input type="text" class="form-control" placeholder="Lockton Companies" [formControl]="eoInsuranceFB.controls.insurerName">
+          </div>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.insurerName.dirty && eoInsuranceFB.controls.insurerName.hasError('required')">{{messages['INSURER_REQUIRED']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Policy Effective Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control datepicker" (focus)="eoPolicyEffDP.hide()" #eoPolicyEffDP="bsDatepicker" bsDatepicker triggers="none" [formControl]="eoInsuranceFB.controls.effectiveDate" placeholder="MM/DD/YYYY" (onHidden)="setExpirationDate(eoInsuranceFB, 'INSURER')" (blur)="setExpirationDate(eoInsuranceFB, 'INSURER')">
+          <div class="input-group-append" (click)="eoPolicyEffDP.toggle()">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.effectiveDate.dirty && eoInsuranceFB.controls.effectiveDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.effectiveDate.dirty && eoInsuranceFB.controls.effectiveDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Policy Expiration Date</label>
+        <div class="col-sm-9 input-group">
+          <input type="text" class="form-control" (focus)="eoPolicyExDP.hide()" #eoPolicyExDP="bsDatepicker" bsDatepicker triggers="none"  placeholder="MM/DD/YYYY" [formControl]="eoInsuranceFB.controls.expirationDate">
+          <div class="input-group-append" (click)="eoPolicyExDP.toggle()">
+            <fa class="dollar-input-group-text" name="calendar"></fa>
+          </div>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.expirationDate.dirty && eoInsuranceFB.controls.expirationDate.hasError('required')">{{messages['DATE_REQ']}}</p>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.expirationDate.dirty && eoInsuranceFB.controls.expirationDate.hasError('invalidDate')">{{messages['INVALID_DATE']}}</p>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.expirationDate.dirty && eoInsuranceFB.controls.expirationDate.hasError('notFutureDate')">{{messages['FUTURE_DATE']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Aggregate</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+            <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="3,000,000" [formControl]="eoInsuranceFB.controls.aggregate">
+          </div>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.aggregate.dirty && eoInsuranceFB.controls.aggregate.hasError('invalidFormat') && !eoInsuranceFB.controls.aggregate.hasError('required') && !eoInsuranceFB.controls.aggregate.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Occurrence</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-prepend"><span class="dollar-input-group-text">$</span></span>
+              <input type="text" [textMask]="{mask: currencyMask, guide: false}" class="form-control" id="" placeholder="1,000,000" [formControl]="eoInsuranceFB.controls.occurrence">
+          </div>
+          <p class="error-msg" *ngIf="eoInsuranceFB.controls.occurrence.dirty && eoInsuranceFB.controls.occurrence.hasError('invalidFormat') && !eoInsuranceFB.controls.occurrence.hasError('required') && !eoInsuranceFB.controls.occurrence.pristine">{{messages['DOLLAR_AMOUNT_REQ']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.physicalAddressInfo && applicationError.company.physicalAddressInfo.isReplaced? 'text-danger': '' ]">Physical Address: <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.physicalAddressInfo && applicationError.company.physicalAddressInfo.isReplaced" popover="{{applicationError.company.physicalAddressInfo.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Address 1</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" placeholder="Example Staffing Street" [formControl]="physicalAddressFB.controls.address1">
+          <p class="error-msg" *ngIf="physicalAddressFB.controls.address1.dirty && physicalAddressFB.controls.address1.hasError('required')">{{messages['ADDRESS_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Address 2</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" [formControl]="physicalAddressFB.controls.address2">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">City</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" placeholder="City" [formControl]="physicalAddressFB.controls.city">
+          <p class="error-msg" *ngIf="physicalAddressFB.controls.city.dirty && physicalAddressFB.controls.city.hasError('required')">{{messages['CITY_REQ']}}</p>
+          <p class="error-msg" *ngIf="physicalAddressFB.controls.city.dirty && physicalAddressFB.controls.city.hasError('invalidFormat')">{{messages['TEXT_ONLY']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">State</label>
+        <div class="col-sm-9">
+          <select [formControl]="physicalAddressFB.controls.state" id="" class="form-control">
+            <option value="{{state._id}}" *ngFor="let state of states">{{state.text}}</option>
+          </select>
+          <p class="error-msg" *ngIf="physicalAddressFB.controls.state.dirty && physicalAddressFB.controls.state.hasError('required')">{{messages['STATE_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">ZIP Code</label>
+        <div class="col-sm-9">
+          <input type="text" [textMask]="{mask: zipMask, guide: false}" class="form-control" id="" placeholder="12345" [formControl]="physicalAddressFB.controls.zipcode">
+          <p class="error-msg" *ngIf="physicalAddressFB.controls.zipcode.dirty && physicalAddressFB.controls.zipcode.hasError('required')">{{messages['ZIPCODE_REQ']}}</p>
+          <p *ngIf="physicalAddressFB.controls.zipcode.touched && physicalAddressFB.controls.zipcode.hasError('invalidFormat') && !physicalAddressFB.controls.zipcode.hasError('required') && !physicalAddressFB.controls.zipcode.pristine" class="error-msg">{{messages['ZIPCODE_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3 billing-address">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.billingAddressInfo && applicationError.company.billingAddressInfo.isReplaced? 'text-danger': '' ]">
+        Billing Address:
+        <span class="checkbox check-small">
+          <input type="checkbox" class="filled-in" id="billingAddress" [checked]="sameAsPhysicalAddress" (change)="checkBoxAction($event, 'billing');">
+          <label for="billingAddress">Same as physical address</label>
+        </span>
+      <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.billingAddressInfo && applicationError.company.billingAddressInfo.isReplaced" popover="{{applicationError.company.billingAddressInfo.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row" [ngClass]="{'back-gray': sameAsPhysicalAddress}"><!-- put "back-gray mb-1" classes for gray background -->
+        <label for="" class="col-sm-3 col-form-label">Address 1</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" placeholder="Example Staffing Street" [formControl]="billingAddressFB.controls.address1">
+          <p class="error-msg" *ngIf="billingAddressFB.controls.address1.dirty && billingAddressFB.controls.address1.hasError('required')">{{messages['ADDRESS_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'back-gray': sameAsPhysicalAddress}"><!-- put "back-gray" classes for gray background -->
+        <label for="" class="col-sm-3 col-form-label">Address 2</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" [formControl]="billingAddressFB.controls.address2">
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'back-gray': sameAsPhysicalAddress}"><!-- put "back-gray mb-1" classes for gray background -->
+        <label for="" class="col-sm-3 col-form-label">City</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="" placeholder="City" [formControl]="billingAddressFB.controls.city">
+          <p class="error-msg" *ngIf="billingAddressFB.controls.city.dirty && billingAddressFB.controls.city.hasError('required')">{{messages['CITY_REQ']}}</p>
+          <p class="error-msg" *ngIf="billingAddressFB.controls.city.dirty && billingAddressFB.controls.city.hasError('invalidFormat')">{{messages['TEXT_ONLY']}}</p>
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'back-gray': sameAsPhysicalAddress}">
+        <label for="" class="col-sm-3 col-form-label">State</label>
+        <div class="col-sm-9">
+          <select [formControl]="billingAddressFB.controls.state" id="" class="form-control">
+            <option value="{{state._id}}" *ngFor="let state of states">{{state.text}}</option>
+          </select>
+          <p class="error-msg" *ngIf="billingAddressFB.controls.state.dirty && billingAddressFB.controls.state.hasError('required')">{{messages['STATE_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'back-gray': sameAsPhysicalAddress}">
+        <label for="" class="col-sm-3 col-form-label">ZIP Code</label>
+        <div class="col-sm-9">
+          <input type="text" [textMask]="{mask: zipMask, guide: false}" class="form-control" id="" placeholder="12345" [formControl]="billingAddressFB.controls.zipcode">
+          <p class="error-msg" *ngIf="billingAddressFB.controls.zipcode.dirty && billingAddressFB.controls.zipcode.hasError('required')">{{messages['ZIPCODE_REQ']}}</p>
+          <p *ngIf="billingAddressFB.controls.zipcode.touched && billingAddressFB.controls.zipcode.hasError('invalidFormat') && !billingAddressFB.controls.zipcode.hasError('required') && !billingAddressFB.controls.zipcode.pristine" class="error-msg">{{messages['ZIPCODE_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+
+    <div class="col-12 col-md-6 mb-3">
+      <h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.socialMedia && applicationError.company.socialMedia.isReplaced? 'text-danger': '' ]">Social Media <span class="optional">(optional):</span> <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('company')!=-1 && applicationError && applicationError.company && applicationError.company.companyInfo && applicationError.company.companyInfo.isReplaced" popover="{{applicationError.company.companyInfo.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional" >Linkedin</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                
+          <input type="text" class="form-control" id="" placeholder="https://www.linkedin.com/company/example-staffing" [formControl]="socialFB.controls.linkedIn">
+            </div> 
+          <p *ngIf="socialFB.controls.linkedIn.touched && socialFB.controls.linkedIn.hasError('invalidFormat') && !socialFB.controls.linkedIn.hasError('required') && !socialFB.controls.linkedIn.pristine" class="error-msg">{{messages['DOMAIN_INVALID_LINKEDIN_FORMAT']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Twitter</label>
+        <div class="col-sm-9">
+
+            <div class="input-group">
+                <span class="input-group-prepend"><span class="dollar-input-group-text">@</span></span>
+
+          <input type="text" class="form-control" id="" placeholder="ExampleStaffing" [formControl]="socialFB.controls.twitter">
+          </div>
+          <p *ngIf="socialFB.controls.twitter.touched && socialFB.controls.twitter.hasError('invalidFormat') && !socialFB.controls.twitter.hasError('required') && !socialFB.controls.twitter.pristine" class="error-msg">{{messages['DOMAIN_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Facebook</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                
+          <input type="text" class="form-control" id="" placeholder="https://www.facebook.com/ExampleStaffing/" [formControl]="socialFB.controls.facebook">
+          </div>
+          <p *ngIf="socialFB.controls.facebook.touched && socialFB.controls.facebook.hasError('invalidFormat') && !socialFB.controls.facebook.hasError('required') && !socialFB.controls.facebook.pristine" class="error-msg">{{messages['DOMAIN_INVALID_FACEBOOK_FORMAT']}}</p>
+        </div>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3"></div>
+      <div class="col-12 form-btn" *ngIf="showActionBtn">
+        <button type="button" class="btn btn-primary" (click)="redirectTo()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="submitCompanyInfo()">Save / Exit</button>
+        <button type="button" class="btn btn-primary" (click)="submitCompanyInfo(true)">Next</button>
+      </div>
+  </div>
+</form>

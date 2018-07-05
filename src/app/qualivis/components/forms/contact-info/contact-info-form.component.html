@@ -1,0 +1,92 @@
+<form action="submit" 
+  [ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+              applicationStatus=='approved') ? 'form-disabled' : '', 
+              role =='admin' &&
+              applicationStatus!='pending' ? 'form-disabled' : '' 
+              ]"  
+  [formGroup]='personalForm'>
+  <div class="row"> 
+    <div class="col-12 col-md-12 mt-3 mb-1"><h4 [ngClass]="[
+        applicationErrorState && applicationErrorState.indexOf('personal')!=-1 && 
+        applicationError && applicationError.personal && 
+        applicationError.personal.personal 
+        && applicationError.personal.personal.isReplaced? 'text-danger': '' 
+        ]">RFP Contact Information: <span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('personal')!=-1 && 
+        applicationError && applicationError.personal && 
+        applicationError.personal.personal 
+        && applicationError.personal.personal.isReplaced" popover="{{applicationError.personal.personal.note}}" [outsideClick]="true" container="body" triggers="click hover"> </span> </h4></div>
+    <div class="col-12 col-md-6">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Name 
+          <span class="info-note" *ngIf="isHavingEnvelopeId" data-placement="right" popover="Note: You cannot change your name via this application once the DocuSign signing ceremony has been initiated, or you have reviewed and signed documents. Please contact Qualivis support if you still need to change your name and void all DocuSign documents." [outsideClick]="true" container="body" triggers="click hover"> </span>
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" placeholder="First MI Last" [formControl]="personalForm.controls['name']">
+          <p class="error-msg" *ngIf="personalForm.controls['name'].dirty && personalForm.controls['name'].hasError('required')">{{messages['NAME_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Title</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" placeholder="Chief Executive Officer" [formControl]="personalForm.controls['title']">
+          <p class="error-msg" *ngIf="personalForm.controls['title'].dirty && personalForm.controls['title'].hasError('required')">{{messages['TITLE_REQ']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Territory</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" placeholder="optional" [formControl]="personalForm.controls['territory']">
+          <p class="error-msg" *ngIf="personalForm.controls['territory'].dirty && personalForm.controls['territory'].hasError('invalidFormat')">{{messages['TEXT_ONLY']}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label">Office Phone</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control"  [textMask]="{mask: phoneMask}"
+          placeholder="(999) 999-9999"  [formControl]="personalForm.controls['officePhone']">
+          <p class="error-msg" *ngIf="personalForm.controls['officePhone'].dirty && personalForm.controls['officePhone'].hasError('required')">{{messages['PHONE_REQ']}}</p>
+          <p *ngIf="personalForm.controls['officePhone'].touched && personalForm.controls['officePhone'].hasError('invalidFormat') && !personalForm.controls['officePhone'].hasError('required') && !personalForm.controls['officePhone'].pristine"
+            class="error-msg">{{messages['PHONE_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Cell Phone</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control"
+          [textMask]="{mask: phoneMask}"
+          placeholder="optional" [formControl]="personalForm.controls['cellPhone']">
+          <p class="error-msg" *ngIf="personalForm.controls['cellPhone'].dirty && personalForm.controls['cellPhone'].hasError('required')">{{messages['MOBILE_REQ']}}</p>
+          <p *ngIf="personalForm.controls['cellPhone'].touched && personalForm.controls['cellPhone'].hasError('invalidFormat') && !personalForm.controls['cellPhone'].hasError('required') && !personalForm.controls['cellPhone'].pristine"
+            class="error-msg">{{messages['PHONE_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label optional">Fax</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control"  [textMask]="{mask: phoneMask}"
+          placeholder="optional"  [formControl]="personalForm.controls['fax']">
+          <p *ngIf="personalForm.controls['fax'].touched && personalForm.controls['fax'].hasError('invalidFormat') && !personalForm.controls['fax'].pristine"
+            class="error-msg">{{messages['PHONE_INVALID_FORMAT']}}</p>
+        </div>
+      </div>
+    </div>
+	<!-- TECHINCAL DEBT -->
+    <div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+      <div class="col-12 form-btn" *ngIf="showActionBtn">
+        <button type="button" class="btn btn-primary" [disabled]="true">Application Closed</button>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+      <div class="col-12 form-btn" *ngIf="showActionBtn">
+        <button type="button" class="btn btn-primary" [disabled]="isExistingAgency ? false : 'disabled'" (click)="redirectTo(true)">Back</button>
+        <button type="button" class="btn btn-primary" (click)="submitPersonalInfo()">Save / Exit</button>
+        <button type="button" class="btn btn-primary" (click)="submitPersonalInfo(true)">Next</button>
+      </div>
+    </ng-template>
+
+  </div>
+</form>

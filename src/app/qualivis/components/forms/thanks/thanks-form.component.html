@@ -1,0 +1,13 @@
+<div action="" class="review">
+  <div class="row">
+		<alert type="danger" class="col-sm-12" *ngIf="errorMsg && errorMsg.length">
+				{{errorMsg}}
+		</alert>
+		<div class="col-sm-12 page-message" *ngIf="successMsg && successMsg.length"  [innerHTML]=successMsg>
+		</div>
+		<div class="col-12 form-btn mt-3">
+			<button type="button" class="btn btn-primary"  (click)="redirectTo()">{{back == routes['change-username'] ? 'Back' : 'Review'}}</button>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,626 @@
+<form action="" 
+[ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+applicationStatus=='approved') ? 'form-disabled' : '', 
+role =='admin' &&
+applicationStatus!='pending' ? 'form-disabled' : '' 
+]" 
+ [formGroup]='reviewApplicationForm'>
+	<div action="" class="review">
+		<div class="row">
+			<section class="col-12 mt-3" id="contactInfo" *ngIf="contactInfo">
+				<div class="row">
+					<div class="col-sm-12" formArrayName='personal'>
+						<div class="main-head border-top-0 check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="personalCheckBox" (change)="enableNote($event, 'personal', 0)"  formControlName="isReplaced">
+									<label for="personalCheckBox"></label>
+								</div>
+								<h2 [ngClass]="{'margin-25':role=='user'}">Contact Info <a *ngIf="applicationStatus!='pending' && role == 'user'" href="javascript:void(0);" (click)="redirectTo(routes['contact-info'])" class="edit">Edit <fa name="pencil"></fa></a></h2>
+								<div *ngIf="role=='admin'">
+										<input
+										type="text"
+										class="form-control"
+										formControlName="note"
+										placeholder="Add Note (Optional)"
+										maxlength="2048"
+										>
+								</div>
+						</div>
+					</div>
+					<div class="group col-12 col-md-3">
+						<h4>RFP Contact Information</h4>
+						<p>{{contactInfo['name']}}</p>
+						<p>{{contactInfo['title']}}</p>
+						<p>{{contactInfo['territory']}}</p>
+					</div>
+					<div class="group col-12 col-md-3">
+						<h4>&nbsp;</h4>
+						<p>{{userEmail}}</p>
+						<p *ngIf="contactInfo['officePhone']"><label>Office: </label>{{contactInfo['officePhone']}}</p>
+						<p *ngIf="contactInfo['cellPhone']"><label>Cell: </label>{{contactInfo['cellPhone']}}</p>
+						<p *ngIf="contactInfo['fax']"><label>Fax: </label>{{contactInfo['fax']}}</p>
+					</div>
+				</div>
+			</section>
+	
+			<section class="col-12 mt-3" id="demographics" *ngIf="companyInfo && !isExistingAgency">
+				<div class="row">
+					<div class="col-sm-12">
+						<h2 class="main-head">Demographics
+							<a *ngIf="applicationStatus!='pending' && role == 'user'" href="javascript:void(0);" (click)="redirectTo(routes.demographics)" class="edit">Edit
+								<fa name="pencil"></fa>
+							</a>
+						</h2>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='companyInfo'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="companyInfoCheckBox" (change)="enableNote($event, 'companyInfo', 0)"  formControlName="isReplaced">
+									<label for="companyInfoCheckBox"></label>
+								</div>
+								<h4>Company Information</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>{{companyInfo['name']}}</p>
+						<p># {{companyInfo['employeeNumber']}}</p>
+						<p>{{companyInfo['taxId']}}</p>
+						<p>{{companyInfo['website']}}</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='jointCommission' *ngIf="companyInfo['jointCommission'] && companyInfo['jointCommission']['id'] || role=='admin'">
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="jointCommissionCheckBox" (change)="enableNote($event, 'jointCommission', 0)"  formControlName="isReplaced">
+									<label for="jointCommissionCheckBox"></label>
+								</div>
+								<h4>Joint Commission</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>
+							<label>TJC ID: </label>{{companyInfo['jointCommission'].id}}</p>
+						<p>
+							<label>EffectiveDate: </label>{{companyInfo['jointCommission']['effectiveDate'] | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Expiration Date: </label>{{companyInfo['jointCommission']['expirationDate'] | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+					</div>
+					<div class="group col-12 col-md-3"  *ngIf="(companyInfo['socialMedia'] && (companyInfo['socialMedia']['linkedIn'] || companyInfo['socialMedia']['twitter'] ||
+					companyInfo['socialMedia']['facebook'] )) || role=='admin'" formArrayName='socialMedia'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="socialMediaCheckBox" (change)="enableNote($event, 'socialMedia', 0)"  formControlName="isReplaced">
+									<label for="socialMediaCheckBox"></label>
+								</div>
+								<h4>Social Media</h4>
+								<div *ngIf="role=='admin'">
+										<input
+										type="text"
+										class="form-control"
+										formControlName="note"
+										placeholder="Add Note (Optional)"
+										maxlength="2048"
+										>
+								</div>
+						</div>
+						<p>
+							<a [href]="companyInfo['socialMedia'].linkedIn" target="_blank">{{companyInfo['socialMedia'].linkedIn}}</a>
+						</p>
+						<p>
+							<a [href]="companyInfo['socialMedia'].twitter" target="_blank">{{companyInfo['socialMedia'].twitter}}</a>
+						</p>
+						<p>
+							<a [href]="companyInfo['socialMedia'].facebook" target="_blank">{{companyInfo['socialMedia'].facebook}}</a>
+						</p>
+					</div>
+					<!-- <div class="group col-12 col-md-3"></div> -->
+					<div class="group col-12 col-md-3" formArrayName='glInsurance'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="glInsuranceCheckBox" (change)="enableNote($event, 'glInsurance', 0)"  formControlName="isReplaced">
+									<label for="glInsuranceCheckBox"></label>
+								</div>
+								<h4>General Liability Insurance </h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>
+							<label>Name: </label>{{companyInfo['glInsurance'].insurerName}}</p>
+						<p>
+							<label>EffectiveDate: </label>{{companyInfo['glInsurance'].effectiveDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Expiration Date: </label>{{companyInfo['glInsurance'].expirationDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Aggregate: </label>${{companyInfo['glInsurance'].aggregate}}</p>
+						<p>
+							<label>Occurence: </label>${{companyInfo['glInsurance'].occurrence}}</p>
+						<p *ngIf="companyInfo['glInsurance'].excessUmbrella">
+							<label>Excess Umbrella: </label>${{companyInfo['glInsurance'].excessUmbrella}}
+						</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='plInsurance'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="plInsuranceCheckBox" (change)="enableNote($event, 'plInsurance', 0)"  formControlName="isReplaced">
+									<label for="plInsuranceCheckBox"></label>
+								</div>
+								<h4>Professional Liability Insurance</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>
+								<label>Name: </label>{{companyInfo['plInsurance'].insurerName}}</p>
+						<p>
+							<label>EffectiveDate: </label>{{companyInfo['plInsurance'].effectiveDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Expiration Date: </label>{{companyInfo['plInsurance'].expirationDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Aggregate: </label>${{companyInfo['plInsurance'].aggregate}}</p>
+						<p>
+							<label>Occurence: </label>${{companyInfo['plInsurance'].occurrence}}</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='wcInsurance'>
+							<div class="check-and-input" [formGroupName]="0">
+									<div class="checkbox" *ngIf="role=='admin'">
+										<input type="checkbox" class="filled-in"  id="wcInsuranceCheckBox" (change)="enableNote($event, 'wcInsurance', 0)"  formControlName="isReplaced">
+										<label for="wcInsuranceCheckBox"></label>
+									</div>
+									<h4>Workers Comp Insurance</h4>
+									<div *ngIf="role=='admin'">
+											<input
+											type="text"
+											class="form-control"
+											formControlName="note"
+											placeholder="Add Note (Optional)"
+											maxlength="2048"
+											>
+									</div>
+							</div>
+						<p>
+								<label>Name: </label>{{companyInfo['wcInsurance'].insurerName}}</p>
+						<p>
+							<label>EffectiveDate: </label>{{companyInfo['wcInsurance'].effectiveDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Expiration Date: </label>{{companyInfo['wcInsurance'].expirationDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p>
+							<label>Occurrence: </label>${{companyInfo['wcInsurance'].occurrence}}</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='eoInsurance' *ngIf="companyInfo['eoInsurance'] && (companyInfo['eoInsurance'].effectiveDate || companyInfo['eoInsurance'].expirationDate
+					|| companyInfo['eoInsurance'].aggregate || companyInfo['eoInsurance'].occurrence || companyInfo['eoInsurance'].insurerName)
+					|| role=='admin'">
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="eoInsuranceCheckBox" (change)="enableNote($event, 'eoInsurance', 0)"  formControlName="isReplaced">
+									<label for="eoInsuranceCheckBox"></label>
+								</div>
+								<h4>Errors & Omissions Insurance</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p  *ngIf="(companyInfo['eoInsurance'] && companyInfo['eoInsurance'].insurerName) || role == 'admin'">
+								<label>Name: </label>{{companyInfo['eoInsurance'] && companyInfo['eoInsurance'].insurerName}}</p>
+						<p *ngIf="(companyInfo['eoInsurance'] && companyInfo['eoInsurance'].effectiveDate) || role == 'admin'">
+							<label>EffectiveDate: </label>{{companyInfo['eoInsurance'] && companyInfo['eoInsurance'].effectiveDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p *ngIf="(companyInfo['eoInsurance'] && companyInfo['eoInsurance'].expirationDate) || role == 'admin'">
+							<label>Expiration Date: </label>{{companyInfo['eoInsurance'] && companyInfo['eoInsurance'].expirationDate | amLocal | amDateFormat: 'MM/DD/YYYY'}}</p>
+						<p *ngIf="(companyInfo['eoInsurance'] && companyInfo['eoInsurance'].aggregate) || role == 'admin'">
+							<label>Aggregate: </label>${{companyInfo['eoInsurance'] && companyInfo['eoInsurance'].aggregate}}</p>
+						<p *ngIf="(companyInfo['eoInsurance'] && companyInfo['eoInsurance'].occurrence) || role == 'admin'">
+							<label>Occurence: </label>${{companyInfo['eoInsurance'] && companyInfo['eoInsurance'].occurrence}}</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='physicalAddressInfo'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="physicalAddressInfoCheckBox" (change)="enableNote($event, 'physicalAddressInfo', 0)"  formControlName="isReplaced">
+									<label for="physicalAddressInfoCheckBox"></label>
+								</div>
+								<h4>Physical Address</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>{{physicalAddressInfo['address1']}}</p>
+						<p>{{physicalAddressInfo['address2']}}</p>
+						<p>{{physicalAddressInfo['city']}}, {{physicalAddressInfo['state']}}</p>
+						<p>{{physicalAddressInfo['zipcode']}}</p>
+					</div>
+					<div class="group col-12 col-md-3" formArrayName='billingAddressInfo'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="billingAddressInfoCheckBox" (change)="enableNote($event, 'billingAddressInfo', 0)"  formControlName="isReplaced">
+									<label for="billingAddressInfoCheckBox"></label>
+								</div>
+								<h4>Billing Address</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>{{billingAddressInfo['address1']}}</p>
+						<p>{{billingAddressInfo['address2']}}</p>
+						<p>{{billingAddressInfo['city']}}, {{billingAddressInfo['state']}}</p>
+						<p>{{billingAddressInfo['zipcode']}}</p>
+					</div>
+				</div>
+			</section>
+	
+			<section class="col-12 mt-3" id="agencyInfo" *ngIf="agencyInfo">
+				<div class="row">
+					<div class="col-sm-12">
+						<h2 class="main-head">Background <a *ngIf="applicationStatus!='pending' && role == 'user'" href="javascript:void(0);" (click)="redirectTo(routes.agency)" class="edit">Edit <fa name="pencil"></fa></a></h2>
+					</div>
+					<div class="col-12 " formArrayName='executiveSummary'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="executiveSummaryCheckBox" (change)="enableNote($event, 'executiveSummary', 0)"  formControlName="isReplaced">
+									<label for="executiveSummaryCheckBox"></label>
+								</div>
+								<h4>Executive Summary</h4>
+								<div *ngIf="role=='admin'">
+										<input
+										type="text"
+										class="form-control"
+										formControlName="note"
+										placeholder="Add Note (Optional)"
+										maxlength="2048"
+										>
+								</div>
+						</div>
+						<p>{{agencyInfo['executiveSummary']}}</p>
+					</div>
+					<div class="col-12 " formArrayName='corporateBackground'>
+						<div class="check-and-input" [formGroupName]="0">
+								<div class="checkbox" *ngIf="role=='admin'">
+									<input type="checkbox" class="filled-in"  id="corporateBackgroundCheckBox" (change)="enableNote($event, 'corporateBackground', 0)"  formControlName="isReplaced">
+									<label for="corporateBackgroundCheckBox"></label>
+								</div>
+								<h4>Corporate Background & Experience</h4>
+								<div *ngIf="role=='admin'">
+									<input
+									type="text"
+									class="form-control"
+									formControlName="note"
+									placeholder="Add Note (Optional)"
+									maxlength="2048"
+									>
+								</div>
+						</div>
+						<p>{{agencyInfo['corporateBackground']}}</p>
+					</div>
+					<div class="col-12 " formArrayName='performancePlan'>
+							<div class="check-and-input" [formGroupName]="0">
+									<div class="checkbox" *ngIf="role=='admin'">
+										<input type="checkbox" class="filled-in"  id="performancePlanCheckBox" (change)="enableNote($event, 'performancePlan', 0)"  formControlName="isReplaced">
+										<label for="performancePlanCheckBox"></label>
+									</div>
+									<h4>Performance Improvement Plan</h4>
+									<div *ngIf="role=='admin'">
+											<input
+											type="text"
+											class="form-control"
+											formControlName="note"
+											placeholder="Add Note (Optional)"
+											maxlength="2048"
+											>
+									</div>
+							</div>
+						<p>{{agencyInfo['performancePlan']}}</p>
+					</div>
+				</div>
+				
+			</section>
+	
+			<section class="col-12 mt-3" id="formsInfo" *ngIf="formsInfo"> 
+					<div class="row">
+						<div class="col-sm-12">
+							<h2 class="main-head">Forms <a *ngIf="applicationStatus!='pending' && role == 'user'" href="javascript:void(0);" (click)="redirectTo(routes.forms)" class="edit">Edit <fa name="pencil"></fa></a></h2>
+						</div>
+						<div class="col-12 col-md-12 mt-3 mb-3" formArrayName='staffingSpecialties' *ngIf="staffingSpecialties.length>0">
+							<div class="check-and-input" [formGroupName]="0">
+									<div class="checkbox" *ngIf="role=='admin'">
+										<input type="checkbox" class="filled-in"  id="staffingSpecialtiesCheckBox" (change)="enableNote($event, 'staffingSpecialties', 0)"  formControlName="isReplaced">
+										<label for="staffingSpecialtiesCheckBox"></label>
+									</div>
+									<h4>Exhibit A: Staffing & Specialties Offered <span class="thin"><br>Clinical Job Specialties - Placements in the Last 12 Months</span></h4>
+									<div *ngIf="role=='admin'">
+										<input
+										type="text"
+										class="form-control"
+										formControlName="note"
+										placeholder="Add Note (Optional)"
+										maxlength="2048"
+										>
+									</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-12 col-md-3 checkbox" *ngFor="let staff of staffingSpecialties;">
+									<input type="checkbox" disabled class="filled-in">	
+									<label [innerHTML]="staff"></label>
+								</div>
+							</div>
+							<h4 *ngIf="formsInfo['isOtherStaffingSpecialties']">Other:  </h4>
+								<div class="row" *ngIf="formsInfo['isOtherStaffingSpecialties']">
+									<div class="col-12 col-md-6 mb-2 sub-sub-heading">{{formsInfo['otherStaffingSpecialties']}}
+									</div>
+								</div>
+							
+						</div>
+	
+						<div class="col-12 col-md-12 mt-3 mb-3" formArrayName='serviceLines' *ngIf="serviceLines.length>0">
+								<div class="check-and-input" [formGroupName]="0">
+									<div class="checkbox" *ngIf="role=='admin'">
+										<input type="checkbox" class="filled-in"  id="serviceLinesCheckBox" (change)="enableNote($event, 'serviceLines', 0)"  formControlName="isReplaced">
+										<label for="serviceLinesCheckBox"></label>
+									</div>
+									<h4>Exhibit A1: Service Lines Offered </h4>
+									<div *ngIf="role=='admin'">
+											<input
+											type="text"
+											class="form-control"
+											formControlName="note"
+											placeholder="Add Note (Optional)"
+											maxlength="2048"
+											>
+									</div>
+							</div>
+							<div class="row">
+									<div class="col-12 col-md-6 mb-2 sub-sub-heading">Clinical Job Specialties</div>
+									<div class="col-12 col-md-6 mb-2 sub-sub-heading">List All Participating Entities</div>
+							</div>
+						<div  *ngFor="let serviceLine of serviceLines;">
+							<div class="row">
+								<div class="form-group col-12 col-md-6 checkbo" >
+										<input type="checkbox" disabled class="filled-in">
+										<label [innerHTML]="serviceLine.name"></label>
+								</div>
+								<div class="form-group col-12 col-md-6">
+									<input type="text" class="form-control" readonly maxlength="2048" [value]=serviceLine.participatingEntities>
+										
+								</div>
+							</div>
+						</div>
+						
+					</div>
+						
+						
+					</div>
+				</section>
+	
+			<section class="col-12 mt-3" id="uploadDocsInfo" *ngIf="uploadDocsInfo">
+				<div class="row">
+					<div class="col-sm-12">
+						<h2 class="main-head">Upload Docs <a *ngIf="applicationStatus!='pending' && role == 'user'" href="javascript:void(0);" (click)="redirectTo(routes['upload-docs'])" class="edit">Edit <fa name="pencil"></fa></a></h2>
+					</div>
+				
+				<div class="col-12 col-md-6 mt-3 mb-3" formArrayName="financeReplaceReason" *ngIf="uploadDocsInfo['financial_statements']">
+						<h4>Financial Statement:</h4>
+						<div class="form-group"  *ngFor="let financial_statement of uploadDocsInfo['financial_statements'];let i = index;">
+							<p class="file-name">	{{financial_statement.name}}  <fa name="download" (click)="downloadDocument(financial_statement.filepath)"  *ngIf="role=='admin'"></fa> 
+							</p> 
+							<div class="admin-comment" [formGroupName]="i"  *ngIf="role =='admin'">
+								<div class="checkbox">
+									<input type="checkbox" class="filled-in"  [id]='financial_statement.randomString' (change)="enableNote($event, 'financeReplaceReason', i)" formControlName="isReplaced">
+									<label [for]='financial_statement.randomString'>Replace</label>
+								</div>
+								<input
+								type="text"
+								class="form-control"
+								formControlName="note"
+								placeholder="Add Note (Optional)"
+								maxlength="2048"
+								>
+							</div>
+						</div>
+					</div>
+			
+				<div class="col-12 col-md-6 mt-3 mb-3" formArrayName="insuranceCertificateReplaceReason" *ngIf="uploadDocsInfo['insurance_certificate']">
+						<h4>Certificate of Insurance:</h4>
+						<p class="des">(General/Professional Liability or Workers Comp)</p>
+						<div class="form-group"  *ngFor="let insurance_certificate of uploadDocsInfo['insurance_certificate'];let i = index;">
+							<p class="file-name" > {{insurance_certificate.name}} <fa name="download" (click)="downloadDocument(insurance_certificate.filepath)"  *ngIf="role=='admin'"></fa> </p>
+							<div class="admin-comment" [formGroupName]="i"  *ngIf="role =='admin'">
+								<div class="checkbox">
+									<input type="checkbox" class="filled-in"  [id]='insurance_certificate.randomString' (change)="enableNote($event, 'insuranceCertificateReplaceReason', i)" formControlName="isReplaced">
+									<label [for]='insurance_certificate.randomString'>Replace</label>
+								</div>
+								<input
+								type="text"
+								class="form-control"
+								formControlName="note"
+								placeholder="Add Note (Optional)"
+								maxlength="2048"
+								>
+							</div>
+						</div>
+					
+				</div>
+			
+				<div class="col-12 col-md-6 mb-3" formArrayName="agencyLicenseReplaceReason"  *ngIf="uploadDocsInfo['agency_license']">
+					<h4>License of Agency:</h4>
+					<div class="form-group">
+						<p class="file-name" *ngIf="uploadDocsInfo['agency_license'].length > 0"> {{uploadDocsInfo['agency_license'][0].name}} <fa name="download" (click)="downloadDocument(uploadDocsInfo['agency_license'][0].filepath)"  *ngIf="role=='admin'"></fa> </p>
+						<div class="admin-comment" [formGroupName]="0" *ngIf="role =='admin'">
+							<div class="checkbox">
+								<input type="checkbox" class="filled-in"  [id]="uploadDocsInfo['agency_license'][0].randomString" (change)="enableNote($event, 'agencyLicenseReplaceReason', 0)" formControlName="isReplaced">
+								<label [for]="uploadDocsInfo['agency_license'][0].randomString">Replace</label>
+							</div>
+							<input
+							type="text"
+							class="form-control"
+							formControlName="note"
+							placeholder="Add Note (Optional)"
+							maxlength="2048"
+							>
+						</div>
+					</div>
+				</div><!-- col-12 col-md-6 -->
+			
+				<div class="col-12 col-md-6 mb-3" formArrayName="commissionCertificateReplaceReason" *ngIf="companyInfo['jointCommission'] && companyInfo['jointCommission']['id'] && uploadDocsInfo['commission_certificate']">
+					<h4>Certificate of Joint Certification Commision:</h4>
+					<div class="form-group">
+						<p class="file-name" *ngIf="uploadDocsInfo['commission_certificate'].length > 0"> {{uploadDocsInfo['commission_certificate'][0].name}} <fa name="download" (click)="downloadDocument(uploadDocsInfo['commission_certificate'][0].filepath)"  *ngIf="role=='admin'"></fa> </p>
+						<div class="admin-comment" [formGroupName]="0" *ngIf="role =='admin'">
+							<div class="checkbox">
+								<input type="checkbox" class="filled-in"  [id]="uploadDocsInfo['commission_certificate'][0].randomString" (change)="enableNote($event, 'commissionCertificateReplaceReason', 0)" formControlName="isReplaced">
+								<label [for]="uploadDocsInfo['commission_certificate'][0].randomString">Replace</label>
+							</div>
+							<input
+							type="text"
+							class="form-control"
+							formControlName="note"
+							placeholder="Add Note (Optional)"
+							maxlength="2048"
+							>
+						</div>
+					</div>
+				</div><!-- col-12 col-md-6 -->
+			
+				<div class="col-12 col-md-6 mb-3" formArrayName="standingCertificateReplaceReason" *ngIf="uploadDocsInfo['standing_certificate']">
+					<h4>Certificate of Good Standing:</h4>
+					<div class="form-group">
+						<p class="file-name" *ngIf="uploadDocsInfo['standing_certificate'].length > 0"> {{uploadDocsInfo['standing_certificate'][0].name}} <fa name="download" (click)="downloadDocument(uploadDocsInfo['standing_certificate'][0].filepath)"  *ngIf="role=='admin'"></fa></p>
+						<div class="admin-comment" [formGroupName]="0" *ngIf="role =='admin'">
+							<div class="checkbox">
+								<input type="checkbox" class="filled-in"  [id]="uploadDocsInfo['standing_certificate'][0].randomString" (change)="enableNote($event, 'standingCertificateReplaceReason', 0)" formControlName="isReplaced">
+								<label [for]="uploadDocsInfo['standing_certificate'][0].randomString">Replace</label>
+							</div>
+							<input
+							type="text"
+							class="form-control"
+							formControlName="note"
+							placeholder="Add Note (Optional)"
+							maxlength="2048"
+							>
+						</div>
+					</div>
+				</div><!-- col-12 col-md-6 -->
+			
+				<div class="col-12 col-md-6 mb-3" formArrayName="referenceLettersReplaceReason" *ngIf="uploadDocsInfo['reference_letters'] && uploadDocsInfo['reference_letters'].length>0">
+					<h4>Letter(s) of Reference*:</h4>
+					<div class="form-group" *ngFor="let reference_letter of uploadDocsInfo['reference_letters'];let i = index;">
+						<p class="file-name"> {{reference_letter.name}} <fa name="download" (click)="downloadDocument(reference_letter.filepath)"  *ngIf="role=='admin'"></fa></p>
+						<div class="admin-comment" [formGroupName]="i" *ngIf="role =='admin'">
+							<div class="checkbox">
+								<input type="checkbox" class="filled-in"  [id]='reference_letter.randomString' (change)="enableNote($event, 'referenceLettersReplaceReason', i)" formControlName="isReplaced">
+								<label [for]='reference_letter.randomString'>Replace</label>
+							</div>
+							<input
+							type="text"
+							class="form-control"
+							formControlName="note"
+							placeholder="Add Note (Optional)"
+							maxlength="2048"
+							>
+						</div>
+					</div>
+				</div><!-- col-12   col-md-6 -->
+				
+			
+				
+			
+				</div>
+			</section>
+
+			<section class="col-12"  *ngIf="role =='admin'">
+				<div class="row">
+					<div class="col-12 mt-3 mb-2">
+						<h4>Additional Comments (Optional)
+						</h4>
+						<div class="form-group row textarea">
+							<div class="col-sm-12">
+								<textarea placeholder="" name="comment" cols="30" rows="4" class="form-control" maxlength="4096" [formControl]="reviewApplicationForm.controls['comment']"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="col-12"></div>
+				</div>
+			</section>
+
+			<div class="col-12 form-btn" *ngIf="role === 'admin' && !isAuthorize">
+				<span>Review By {{reviewUserEmail}} <span class="lock"></span> </span>
+			</div>
+	
+			<div class="col-12 form-btn" *ngIf="showAdminActionBtn">
+					<button type="button" class="btn btn-primary"  (click)="openConfirmationModal('rejected',comfirmationTemplate)">Reject</button>
+					<button type="submit" class="btn btn-primary" [disabled]="isApproveApplication" (click)="openConfirmationModal('returned',comfirmationTemplate)">Return</button>
+					<button type="button" class="btn btn-primary" [disabled]="!isApproveApplication" (click)="openConfirmationModal('approve',comfirmationTemplate)">Approve</button>
+			</div>
+
+			<div class="col-12 form-btn" *ngIf="role=='admin' && applicationStatus =='approved' && docusignSigned">
+				<button type="button" class="btn btn-primary" (click)="getDocuSignUrl()">View Documents</button>
+			</div>
+		
+			<!-- TECHINCAL DEBT (HACK)-->
+			<div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+			<ng-template #thenBlock>
+				<div class="col-12 form-btn" *ngIf="showUserActionBtn">
+					<button type="button" class="btn btn-primary"  [disabled]="true">Application Closed</button>
+				</div>
+			</ng-template>
+			<ng-template #elseBlock>
+				<div class="col-12 form-btn" *ngIf="showUserActionBtn">
+					<button type="button" class="btn btn-primary" (click)="redirectTo(routes['upload-docs'])" *ngIf="applicationStatus =='returned' || applicationStatus =='submitting'">Back</button>
+					<button type="button" class="btn btn-primary" *ngIf="applicationStatus =='returned'" (click)="submitApplication(true)">Resubmit</button>
+					<button type="button" class="btn btn-primary" *ngIf="applicationStatus =='submitting'" [disabled]="!contactInfo || !companyInfo || !agencyInfo || !formsInfo" (click)="submitApplication(false)">Sign</button>
+					<button type="button" class="btn btn-primary" *ngIf="docusignSigned" [disabled]="!formsInfo" (click)="submitApplication()">View Documents</button>
+				</div>
+			</ng-template>
+			
+		</div>
+	</div>
+	<ng-template #comfirmationTemplate >
+			<div class="modal-body text-center"> 
+			  <p *ngIf="action=='returned'">Return Application?</p>
+			  <p *ngIf="action=='rejected'">Reject Application?</p>
+			  <p *ngIf="action=='approve'">Approve Application?</p>
+			  <button type="button" class="btn btn-primary" (click)="confirm()">Yes</button>
+			  <button type="button" class="btn btn-primary" (click)="decline()">No</button>
+			</div>
+	</ng-template>
+</form>
+

@@ -1,0 +1,65 @@
+// colors
+$white: 		#FFF;
+$black: 		#000;
+$red: 			#dc3545;
+
+$search-btn-color: #72b461;
+
+$primary-color: 	    #71acbf;
+$light-green:			#78BE20;
+$dark-green: 			#215732;
+$success:               #e7f4ec;
+$orange:				#FA4616;
+$pending-color:         #bd8515;
+$light-blue: 			#41B6E6;
+$dark-blue: 			#004B87;
+$gray:					#505759;
+$dark-gray:             #424856;
+$label-color:           #9f9f9f;
+$light-grey:            #9b9b9b;
+$bold-text-color:       #4a4a4a;
+$box-background:        #e4e4e4;
+$summay-box-background: #f7f9fb;
+$input-border:          #dddddd;
+$header-border:         #d8d8d8;
+$checkbox-background:   #f7f7f7;
+$step-box-color:        #129a44;
+$login-chekbox-background: #e9e9e9;
+$loign-text-color: #666666;
+$table-header-color: #14161d;
+//fonts
+$light-font: 'source_sans_prolight';
+$regular-font: 'source_sans_proregular';
+$bold-font: 'source_sans_probold';
+$semibold-font: 'source_sans_prosemibold';
+
+// Button colors
+$primary-btn-color: $primary-color;
+$primary-btn-hover-color: $light-green;
+$primary-btn-active-color: $dark-green;
+
+$gray-btn-color: $gray;
+$gray-btn-hover-color: lighten($gray, 20);
+$gray-btn-active-color: darken($gray, 10);
+$placeholder-color: lighten($gray, 40);
+
+
+// font size
+$big-heading-font: 		    26px;
+$heading-font: 				24px;
+$sub-heading-font: 			20px;
+$sub-sub-heading-font: 	    18px;
+$normal-font: 				16px;
+$small-font: 				14px;
+$extra-small-font: 			13px;
+$tiny-font:					12px;
+
+
+$header-z-index:		9;
+$header-height: 		70px;
+$footer-height: 		54px;
+
+
+$screen-xs-max: 576px;
+$screen-sm-max: 768px;
+$screen-md-max: 992px;

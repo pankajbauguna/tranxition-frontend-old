@@ -1,0 +1,145 @@
+@import "~assets/scss/_fonts.scss";
+@import "~assets/scss/_variables.scss";
+form{
+	h4{
+		font-family: 'source_sans_probold';
+		font-size: $sub-sub-heading-font;
+		.thin{
+			font-family: 'source_sans_proregular';
+		}
+	}
+	label{
+		font-family: 'source_sans_prosemibold';
+
+		&.col-sm-3{
+			padding: 0 0 0 15px;
+			align-items: center;
+			display: flex;
+		}
+	}
+}
+.form-btn{
+	text-align: center;
+	margin: 0 !important;
+	position: fixed;
+  bottom: 0;
+  background: $white;
+  border-top: 1px solid lighten($gray, 50);
+  left: 0;
+  z-index: $header-z-index;
+	.btn{
+		margin: .5rem;
+		@media (max-width: $screen-xs-max) {
+			margin: 0.5rem .25rem;
+			min-width: 88px;
+			&:first-child{
+				margin-left: 0;
+			}
+			&:last-child{
+				margin-right: 0;
+			}
+		}
+	}
+}
+.textarea{
+	.error-msg{
+		top: auto;
+		bottom: -20px;
+	}
+}
+
+.upload-form{
+
+	.form-group{
+		float: left;
+		width: 100%;
+		margin-bottom: 1.2rem;
+
+		label{
+			margin-bottom: 0;
+			margin-right: 10px;
+		}
+
+		p{
+			float: left;
+			position: relative;
+			&.des{
+				width: calc(100% - 150px);
+				margin-top: 6px;
+			}
+			&.file-name{
+				width: 100%;
+				font-size: 16px;
+				font-family: 'source_sans_prosemibold';
+				margin-top: 0.5rem;
+				a{
+					margin-left: 2px;
+					position: relative;
+					top: 1px;
+				}
+			}
+		}
+	}
+	.note{
+		font-size: $extra-small-font;
+		float: left;
+		width: 100%;
+	}
+}
+.btn{
+	&.add{
+		font-size: $heading-font;
+		min-width: auto;
+		height: 35px;
+		width: 38px;
+		line-height: 1;
+	}
+}
+
+.input-group,
+.input-group-append {
+	max-height: 38px;
+}
+
+.optional {
+  font-family: 'source_sans_prolight' !important;
+  font-weight: normal;
+}
+.lor-inputs{
+	.form-group{
+			p{
+				&.des{
+					width: 100%;
+				}
+				&.file-name{
+					margin-top: -0.5rem;
+				}
+			}
+		}
+	}
+
+.infoIcon {    
+  display: inline-block;
+  height: 18px;
+  vertical-align: sub;
+}
+.admin-comment{
+	float: none;
+	width: 200px;
+}
+.form-group{
+	&.back-gray{
+		background: lighten($gray, 58);
+		margin-bottom: 0;
+		padding-bottom: 1.4rem;
+		pointer-events: none;
+
+		input, select {
+			border-color: lighten($gray, 58);
+		}
+
+		select {
+			-webkit-appearance: initial;
+		}
+	}
+}

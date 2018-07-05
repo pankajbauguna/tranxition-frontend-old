@@ -1,0 +1,11 @@
+@import "../../../auth/components/register/register-form.component.scss";
+.error-page{
+	h3 {
+		// font-size: 1.3rem;
+		font-weight: 700;
+		text-align: center;
+	}
+	p {
+		text-align: left;
+	}
+}

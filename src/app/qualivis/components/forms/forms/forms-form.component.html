@@ -1,0 +1,95 @@
+<form  action="submit" 
+	[ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+	applicationStatus=='approved') ? 'form-disabled' : '', 
+	role =='admin' &&
+	applicationStatus!='pending' ? 'form-disabled' : '' 
+	]" 
+	[formGroup]='formsForm'>
+	<div class="row">
+
+		<alert type="danger" *ngIf="errorMsg && errorMsg.length">
+		    {{errorMsg}}
+		 </alert>
+		 <alert type="success" *ngIf="successMsg && successMsg.length">
+		    {{successMsg}}
+		 </alert>
+
+		<div class="col-12 col-md-12 mt-3 mb-3">
+			<h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('forms')!=-1 && applicationError && applicationError.forms && applicationError.forms.staffingSpecialties && applicationError.forms.staffingSpecialties.isReplaced? 'text-danger': '' ]">Exhibit A: Staffing & Specialties Offered <span class="thin">(check all that apply)<br/><br/>Clinical Job Specialties - Placements in the Last 12 Months</span>
+				<span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('forms')!=-1 && applicationError && applicationError.forms && applicationError.forms.staffingSpecialties && applicationError.forms.staffingSpecialties.isReplaced" popover="{{applicationError.forms.staffingSpecialties.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+			</h4>
+			<div *ngIf="formsForm.controls['staffingSpecialties'].hasError('multipleCheckboxRequireOne') && !formsForm.controls['staffingSpecialties'].pristine" class="row error-msg error-checkbox">{{messages['STAFFING_SELECTION_REQ']}}</div>
+			<div class="row" formArrayName="staffingSpecialties">
+				<div class="form-group col-12 col-md-3 checkbox" *ngFor="let staff of staffingSpecialties; let i = index;" [formGroupName]="i">
+						<input type="checkbox" class="filled-in"  [id]="staff._id" [formControlName]="staff._id"  [value]="staff._id">
+						<label [for]="staff._id" [innerHTML]="staff.name"></label>
+			  </div>
+			</div>
+			<div class="row">
+				<div class="form-group col-12 col-md-3 checkbox pt-2">
+					<input type="checkbox" name='isOtherStaffingSpecialties' class="filled-in" (change)="changeOther($event)"  id="isOtherStaffingSpecialties" [formControl]="formsForm.controls['isOtherStaffingSpecialties']">
+					<label for="isOtherStaffingSpecialties">Other</label>
+				</div>
+				<div class="form-group col-12 col-md-6" *ngIf="formsForm.controls['isOtherStaffingSpecialties'].value">
+						<input type="text" class="form-control" name='otherStaffingSpecialties'  [formControl]="formsForm.controls['otherStaffingSpecialties']"  id=""  placeholder="Enter staffing specialties which are not listed here" maxlength="2048">
+						<p *ngIf="formsForm.controls['otherStaffingSpecialties'].hasError('requireOtherStaffingSpecialties')"
+				class="error-msg"> {{messages['OTHER_STAFFING_SPECIALITIES_REQ']}} </p>	
+				</div>
+			</div>
+			
+		</div>
+		<div class="col-12 mb-3" formArrayName="serviceLines">
+			<h4 [ngClass]="[applicationErrorState && applicationErrorState.indexOf('forms')!=-1 && applicationError && applicationError.forms && applicationError.forms.serviceLines && applicationError.forms.serviceLines.isReplaced? 'text-danger': '' ]">Exhibit A1: Service Lines Offered  <span class="thin">(check all that apply)</span>
+				<span class="sticky-note" *ngIf="applicationErrorState && applicationErrorState.indexOf('forms')!=-1 && applicationError && applicationError.forms && applicationError.forms.serviceLines && applicationError.forms.serviceLines.isReplaced" popover="{{applicationError.forms.serviceLines.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+			</h4>
+			<div *ngIf="serviceLineControl.hasError('multipleCheckboxRequireOne') && !serviceLineControl.pristine" class="row error-msg error-checkbox">{{messages['SERVICE_LINES_SELECTION_REQ']}}</div>
+			<div *ngIf="serviceLineControl.hasError('isParticipatingValidation') && !serviceLineControl.pristine" class="row error-msg error-checkbox">{{messages['PARTICIPATING_ENTITIES_REQ']}}</div>
+			<div class="row">
+				<div class="col-12 col-md-6 mb-2 sub-sub-heading">Clinical Job Specialties</div>
+				<div class="col-12 col-md-6 mb-2 sub-sub-heading">List All Participating Entities
+          <img *ngIf="helpMessages['PARTICIPATING_ENTITIES']" popover="{{helpMessages['PARTICIPATING_ENTITIES']}}" [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="click hover">
+
+        </div>
+			</div>
+			<div  *ngFor="let serviceLine of serviceLines;let i = index;">
+				<div class="row" [formGroupName]="i">
+					<div class="form-group col-12 col-md-6 checkbox">
+						<input type="checkbox" class="filled-in"  [id]="serviceLine._id" [formControlName]="serviceLine._id" (ngModelChange)="clearEntities(formsForm.controls['serviceLines'], i)">
+						<label [for]="serviceLine._id" [innerHTML]="serviceLine.name"></label>
+					</div>
+					<div class="form-group col-12 col-md-6">
+						<input
+							type="text"
+							class="form-control"
+							formControlName="participatingEntities"
+							placeholder="{{serviceLineControl.value[i][serviceLine._id] ? 'A Staffing Company, B Staffing Company, C Staffing Company' : ''}}"
+							maxlength="2048"
+							readonly="{{serviceLineControl.value[i][serviceLine._id] ? '' : 'readonly'}}"
+							>
+			    </div>
+			  </div>
+			</div>
+		</div>
+    <!--
+		<div class="col-12 mt-3 mb-3">
+			<p class="bold">Conflict of Interest Statement</p>
+			<a href="../assets/dummy.pdf" download class="big-underline">Download PDF</a>
+    </div>
+    -->
+		<!-- TECHINCAL DEBT -->
+		<div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+		<ng-template #thenBlock>
+			<div class="col-12 form-btn" *ngIf="showActionBtn">
+				<button type="button" class="btn btn-primary"  [disabled]="true">Application Closed</button>
+			</div>
+		</ng-template>
+		<ng-template #elseBlock>
+		<div class="col-12 form-btn" *ngIf="showActionBtn">
+			<button type="button" class="btn btn-primary" (click)="redirectToAgency()">Back</button>
+			<button type="button" class="btn btn-primary" (click)="formsSubmit()">Save / Exit</button>
+			<button type="button" class="btn btn-primary" (click)="formsSubmit(true)">Next</button>
+		</div>
+	</ng-template>	
+	</div>
+</form>
+

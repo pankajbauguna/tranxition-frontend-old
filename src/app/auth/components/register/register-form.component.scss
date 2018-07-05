@@ -1,0 +1,23 @@
+.center-login{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-signin {
+  &.big-form{
+    max-width: 550px;
+    h3{
+      text-align: left;
+      margin: 0 0 1.0rem;
+    }
+    .logo{
+      max-width: 200px;
+    }
+    p{
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+  }
+}

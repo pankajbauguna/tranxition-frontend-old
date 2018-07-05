@@ -1,0 +1,17 @@
+@import "../contact-info/contact-info-form.component.scss";
+
+%bg-gray-shared {
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+}
+.insurance {
+  &.back-gray:nth-child(4) {
+    @extend %bg-gray-shared;
+  }
+}
+
+.billing-address {
+  .back-gray:last-child {
+    @extend %bg-gray-shared;
+  }
+}

@@ -1,0 +1,143 @@
+<form action="" class="upload-form" 
+  [ngClass]="[ role =='user' && (applicationStatus=='pending' || applicationStatus=='rejected' || 
+  applicationStatus=='approved') ? 'form-disabled' : '', 
+  role =='admin' &&
+  applicationStatus!='pending' ? 'form-disabled' : '' 
+  ]" 
+  [formGroup]='uploadDocsForm'>
+  <div class="row">
+    <div class="col-12 col-md-6 mt-3 mb-3" formArrayName="financeReplaceReason" *ngIf="!isExistingAgency">
+     <h4>Financial Statement: <img *ngIf="helpMessages['FINANCIAL_STATEMENTS']" popover="{{helpMessages['FINANCIAL_STATEMENTS']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true"></h4>
+      <div class="form-group"  *ngFor="let statement of financial_statements;let i = index;">
+        <label [ngClass]="[(!statement['isReplaced'])? 'file-container':'',statement['isReplaced'] ?  'file-container bg-danger' : '']"  *ngIf="(statement['isReplaced'] || statement.length == 0) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'financial_statements', 'financial_statements', i, '',statement['isReplaced'],statement['randomString'])"/>
+        </label>
+        <span class="sticky-note" *ngIf="statement['isReplaced']" popover="{{statement['note']}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        
+        <p class="file-name" *ngIf="statement['name'] && !statement['isReplaced']"> {{statement['name']}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('financial_statements', 'financial_statements', i);">X</a>
+        </p>
+       
+      </div>
+      <div class="form-group" *ngIf="applicationStatus!='pending' && addMoreFinance">
+        <a href="javascript:void(0);" class="btn btn-primary add" title="Add more..." (click)="addMoreUploadOption(financial_statements, 'financial_statements')">+</a>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mt-3 mb-3" formArrayName="insuranceCertificateReplaceReason" *ngIf="!isExistingAgency">
+      <h4>Certificate of Insurance: <img *ngIf="helpMessages['CERTIFICATES_OF_INSURANCE']" popover="{{helpMessages['CERTIFICATES_OF_INSURANCE']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true"></h4>
+      <p class="note">General/Professional Liability and Workers Comp</p>
+      <div class="form-group" *ngFor="let statement of insurance_certificate;let i = index;">
+        <label class="file-container" [ngClass]="[(!statement['isReplaced'] || statement['isReplaced'] === undefined)? 'file-container':'',statement['isReplaced'] ?  'file-container bg-danger' : '']" *ngIf="(statement.length == 0 || statement['isReplaced']) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'insurance_certificate', 'insurance_certificate', i, '', statement['isReplaced'],statement['randomString'])"/>
+        </label>
+        <span class="sticky-note" *ngIf="statement['isReplaced']" popover="{{statement['note']}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        <p class="file-name" *ngIf="statement['name'] && !statement['isReplaced']"> {{statement['name']}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('insurance_certificate', 'insurance_certificate', i);">X</a>
+        </p>
+       
+      </div>
+      <!-- <div class="form-group">
+        <label class="file-container" *ngIf="certificateOfInsurance.length == 0">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'insurance_certificate', 'certificateOfInsurance')"/>
+        </label>
+        <p class="des">(Certificate of Insurance)</p>
+        <p class="file-name" *ngIf="certificateOfInsurance.name"> {{certificateOfInsurance.name}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('insurance_certificate', 'certificateOfInsurance');">X</a></p>
+      </div> -->
+      <div class="form-group" *ngIf="applicationStatus!='pending' && addMoreInsurance">
+        <a href="javascript:void(0);" class="btn btn-primary add" title="Add more..." (click)="addMoreUploadOption(insurance_certificate, 'insurance_certificate')">+</a>
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3" formArrayName="agencyLicenseReplaceReason" *ngIf="!isExistingAgency">
+      <h4>License of Agency:
+          <img *ngIf="helpMessages['LICENSE_OF_AGENCY']" popover="{{helpMessages['LICENSE_OF_AGENCY']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true">
+      </h4>
+      <div class="form-group"> 
+        <label [ngClass]="[agency_license.length === 0 ? 'file-container': '' , agency_license && agency_license.length>0 && agency_license[0].isReplaced? 'file-container bg-danger': '']" *ngIf="(agency_license.length == 0 || agency_license[0].isReplaced) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'agency_license','','','',agency_license[0] && agency_license[0].isReplaced, agency_license[0] && agency_license[0].randomString)"/>
+        </label>
+        
+        <span class="sticky-note" *ngIf="agency_license && agency_license.length>0 && agency_license[0].isReplaced" popover="{{agency_license[0].note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        
+        <p class="file-name" *ngIf="agency_license.length > 0 && !agency_license[0].isReplaced"> {{agency_license[0].name}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('agency_license');">X</a>
+        </p>
+       
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3" formArrayName="commissionCertificateReplaceReason"  *ngIf="!isExistingAgency && hasTJCID">
+      <h4>Certificate of Joint Commission Certification:
+          <img *ngIf="helpMessages['CERTIFICATE_OF_JOINT_COMMISSION_CERTIFICATION']" popover="{{helpMessages['CERTIFICATE_OF_JOINT_COMMISSION_CERTIFICATION']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true">
+      </h4>
+      <!-- <p class="note">If you do not have a Certificate of Joint Certification Commision, upload a page stating that this is not applicable.</p> -->
+      <div class="form-group">
+        <label [ngClass]="[commission_certificate.length ==0 ? 'file-container': '' , commission_certificate && commission_certificate.length>0 && commission_certificate[0].isReplaced? 'file-container bg-danger':'' ]"  *ngIf="(commission_certificate.length == 0 || commission_certificate[0].isReplaced) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'commission_certificate','','','',commission_certificate[0] && commission_certificate[0].isReplaced,commission_certificate[0] && commission_certificate[0].randomString)"/>
+        </label>
+        <span class="sticky-note" *ngIf="commission_certificate && commission_certificate.length>0 && commission_certificate[0].isReplaced" popover="{{commission_certificate[0].note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        
+        <p class="file-name" *ngIf="commission_certificate.length > 0  && !commission_certificate[0].isReplaced"> {{commission_certificate[0].name}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('commission_certificate');">X</a>
+          
+        </p>
+       
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3" formArrayName="standingCertificateReplaceReason"  *ngIf="!isExistingAgency">
+      <h4>Certificate of Good Standing: <img *ngIf="helpMessages['CERTIFICATE_OF_GOOD_STANDING']" popover="{{helpMessages['CERTIFICATE_OF_GOOD_STANDING']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true"></h4>
+      <div class="form-group">
+        <label [ngClass]="[standing_certificate.length == 0 ? 'file-container': '' , standing_certificate && standing_certificate.length>0 && standing_certificate[0].isReplaced ? 'file-container bg-danger': '']" *ngIf="(standing_certificate.length == 0 || standing_certificate[0].isReplaced) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'standing_certificate','','','',standing_certificate[0] && standing_certificate[0].isReplaced,standing_certificate[0] && standing_certificate[0].randomString)"/>
+        </label>
+        <span class="sticky-note" *ngIf="standing_certificate && standing_certificate.length>0 && standing_certificate[0].isReplaced" popover="{{standing_certificate[0].note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        <p class="file-name" *ngIf="standing_certificate.length > 0 && !standing_certificate[0].isReplaced"> {{standing_certificate[0].name}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('standing_certificate');">X</a>
+        </p>
+        
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3 lor-inputs" formArrayName="referenceLettersReplaceReason"  *ngIf="!isTravelSelected">
+      <h4>Letter(s) of Reference: <img *ngIf="helpMessages['LETTERS_OF_REFERENCE']" popover="{{helpMessages['LETTERS_OF_REFERENCE']}}"  [src]="infoIcon" alt="i" class="info infoIcon" [outsideClick]="true" container="body" triggers="hover" aria-hidden="true"></h4>
+      <p class="note">* Upload 1 letter of reference per Service Line Offered. <br/>* No letter of references required for Travel service lines.</p>
+      <div class="form-group" *ngFor="let letter of letters;let i = index;">
+        <p class="des" *ngIf="selectedServices[i]">({{selectedServices[i].name}})</p>
+        <label  [ngClass]="[(!letter.isReplaced || letter.isReplaced === undefined) ? 'file-container':'', letter.isReplaced? 'file-container bg-danger': '' ]" *ngIf="(!letter.randomString || letter.isReplaced) && role == 'user'">
+          Upload File
+          <input type="file" accept={{acceptedFileFormats}} (change)="uploadDocument($event, 'reference_letters', 'letters', i, selectedServices[i]['_id'],letter.isReplaced,letter.randomString)"/>
+        </label>
+        <span class="sticky-note" *ngIf="letter.isReplaced" popover="{{letter.note}}" [outsideClick]="true" container="body" triggers="click hover"></span>
+        <p class="file-name" *ngIf="letter.name && !letter.isReplaced"> {{letter.name}} <a *ngIf="applicationStatus!='pending'" href="javascript:void(0);" (click)="removeDoc('reference_letters', 'letters', i);">X</a>
+        </p>
+       
+
+      </div>
+    </div><!-- col-12 col-md-6 -->
+
+    <div class="col-12 col-md-6 mb-3 lor-inputs" *ngIf="isExistingAgency && isTravelSelected">
+      <h4>No letter of references required for Travel service lines.</h4>
+    </div><!-- col-12 col-md-6 -->
+
+
+    	<!-- TECHINCAL DEBT -->
+    <div *ngIf="applicationStatus =='late'; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+      <div class="col-12 form-btn" *ngIf="showActionBtn">
+        <button type="button" class="btn btn-primary" [disabled]="true">Application Closed</button>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+
+    <div class="col-12 form-btn" *ngIf="showActionBtn">
+      <button type="button" class="btn btn-primary" (click)="redirectTo('forms')">Back</button>
+      <button type="button" class="btn btn-primary" (click)="logOut()">Save / Exit</button>
+      <button type="button" class="btn btn-primary" [disabled]="!uploadDocValid" (click)="redirectTo('review')">Next</button>
+    </div>
+    </ng-template>
+
+  </div><!-- row -->
+</form>

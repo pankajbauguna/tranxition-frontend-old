@@ -1,0 +1,23 @@
+@import "../dashboard/dashboard.component.scss";
+
+.center-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.captcha {
+  margin: 10px 0;
+  font-size: 18px;
+  text-align: center;
+  input {
+    width: 80px;
+    position: relative;
+    display: inline-block;
+  }
+  .error-msg-nxt {
+    position: inherit !important;
+    text-align: center;
+    display: block;
+  }
+}

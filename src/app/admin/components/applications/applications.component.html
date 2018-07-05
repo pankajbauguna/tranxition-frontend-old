@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-sm-12 mt-5 mb-3" *ngIf="!applications">
+      <div class="text-left mt-5">
+              No Application found.
+      </div>
+  </div>
+  <div class="col-sm-12 mt-5 mb-3" *ngIf="applications">
+    <div class="col-12 pb-2">
+      <button type="button" class="btn btn-outline" [ngClass]="{'active': activeStatus==='all'}" (click)="redirectTo({ status: 'all' })">
+        View All
+      </button>
+      <button type="button" class="btn btn-outline" [ngClass]="{'active': activeStatus==='pending'}" (click)="redirectTo({ status: 'pending' })">
+        Pending
+      </button>
+      <button type="button" class="btn btn-outline" [ngClass]="{'active':activeStatus=='submitting'}" (click)="redirectTo({ status: 'submitting' })">
+        Submitting
+      </button>
+      <button type="button" class="btn btn-outline" [ngClass]="{'active': activeStatus=='returned'}" (click)="redirectTo({ status: 'returned' })">
+        Returned
+      </button>
+      <button type="button" class="btn btn-outline" [ngClass]="{'active': activeStatus=='rejected'}" (click)="redirectTo({ status: 'rejected' })">
+        Rejected
+      </button>
+      <button type="button" class="btn btn-outline" [ngClass]="{'active': activeStatus=='approved'}" (click)="redirectTo({ status: 'approved' })">
+        Approved
+      </button>
+    </div>
+    <!-- <table class="w-100 application-table mt-5">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Reference Number</th>
+          <th>Status</th>
+          <th>Review By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr  [ngClass]="{'pending': application.state=='pending'}" *ngFor="let application of applications;">
+          <td><a href="javascript:void(0);" (click)="redirectTo({id: application._id})">{{application.company && application.company.name}}</a></td>
+          <td>{{application.referenceNumber}}</td>
+          <td >
+            <fa name="check" *ngIf="application.state=='approved'"></fa>
+            <fa name="times" class="text-orange" *ngIf="application.state=='rejected'"></fa> 
+            <fa name="mail-reply"  *ngIf="application.state=='returned'"></fa> 
+            <fa name="ellipsis-h"  *ngIf="application.state=='pending'"></fa> 
+            {{application.state | titlecase}}
+          </td>
+          <td>
+            <span *ngIf="application.isApplicationReviewedByMe && application.isApplicationReviewed">Me</span>
+            <span *ngIf="!application.isApplicationReviewedByMe && application.isApplicationReviewed"><fa name="lock"></fa>{{application.reviewUserEmail}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
+
+    <div>
+      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event)" [rows]="tableRows"
+        [columns]="columns"></ng-table>
+      <div class="no-record" *ngIf="applications.length==0">No Application Found.</div>
+    
+      <div class="new-pagination" *ngIf="config.paging && applications.length!==0">
+        <pagination class="pagination-sm" [totalItems]="length" [itemsPerPage]="itemsPerPage" [maxSize]="maxSize"
+          [boundaryLinks]="true" [rotate]="false" (pageChanged)="onChangeTable(config, $event)" (numPages)="numPages = $event"></pagination>
+        
+        <div class="btn-group" dropdown>
+          <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
+            {{pagerLabel}} entities per page
+            <span class="caret"></span>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu">
+            <li role="menuitem" *ngFor="let option of pagerOptions" (click)="pagerLabel=option.itemsPerPage=='all'?'All':option.itemsPerPage;onChangeTable(config, { page: this.page, itemsPerPage: option.itemsPerPage }, true)">
+              <a class="dropdown-item">{{option.itemsPerPage}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+      

@@ -1,0 +1,52 @@
+<div class="center-form">
+  <form action="submit" [formGroup]='registerAdminForm' (ngSubmit)="registerAdminUser(registerAdminForm.value)"  class="form-signin">
+    <div>
+        <p class="font-small text-center">Create new admin.</p>
+
+        <div class="form-group">
+            <label for="inputEmail" class="sr-only">Email</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email" [formControl]="registerAdminForm.controls['email']"
+                autofocus>
+            <p class="error-msg" *ngIf="!registerAdminForm.controls['email'].pristine && registerAdminForm.controls['email'].touched && registerAdminForm.controls['email'].hasError('required')">{{messages['EMAIL_REQ']}}</p>
+            <p *ngIf="registerAdminForm.controls['email'].touched && registerAdminForm.controls['email'].hasError('invalidFormat') && !registerAdminForm.controls['email'].hasError('required') && !registerAdminForm.controls['email'].pristine"
+                class="error-msg">{{messages['EMAIL_INVALID_FORMAT']}}</p>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" [formControl]="registerAdminForm.controls['password']">
+            <p *ngIf="registerAdminForm.controls['password'].touched && !registerAdminForm.controls['password'].pristine && registerAdminForm.controls['password'].hasError('required')"
+                class="error-msg"> {{messages['SIGNUP_PASSWORD_REQUIRED']}} </p>
+            <p *ngIf="registerAdminForm.controls['password'].touched && !registerAdminForm.controls['password'].pristine && registerAdminForm.controls['password'].hasError('invalidFormat') && !registerAdminForm.controls['password'].hasError('required')"
+                class="error-msg"> {{messages['PASSWORD_INVALID_FORMAT']}} </p>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword" class="sr-only">Re-Enter Password</label>
+            <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Re-Enter Password" [formControl]="registerAdminForm.controls['confirmPassword']">
+            <p *ngIf="registerAdminForm.controls['confirmPassword'].touched && !registerAdminForm.controls['confirmPassword'].pristine && registerAdminForm.controls['confirmPassword'].hasError('matchPassword')"
+                class="error-msg"> {{messages['CONFIRM_PASSWORD_MATCH']}} </p>
+        </div>
+       <button class="btn btn-primary" [disabled]="!registerAdminForm.valid" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+
+
+<div class="row">
+  <!-- <div class="col-sm-12 mt-3 mb-3 no-record" *ngIf="isServerResponse && applications.length==0">
+      <p class="text-primary">No Application found.</p>
+  </div> -->
+  <div class="col-sm-12 mt-5 mb-3" *ngIf="isServerResponse">
+   
+    <div>
+      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" [rows]="tableRows"
+        [columns]="columns"></ng-table>
+      <div class="no-record" *ngIf="admins.length==0">No Admin Found.</div>
+    
+      <pagination *ngIf="config.paging&&admins.length!==0" class="pagination-sm" [totalItems]="length" [itemsPerPage]="itemsPerPage" [maxSize]="maxSize"
+        [boundaryLinks]="true" [rotate]="false" (pageChanged)="onChangeTable(config, $event)" (numPages)="numPages = $event"></pagination>
+    </div>
+
+  </div>
+</div>
+
+

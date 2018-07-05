@@ -1,0 +1,33 @@
+.data-row {
+  background: $white;
+  padding: 15px;
+  margin-bottom: 15px;
+  div{
+    flex-basis: 15%;
+    display: flex;
+    justify-content: center;
+    &:first-child{
+      flex-basis: 25%;
+      justify-content: flex-start;
+    }
+    &:last-child{
+      flex-basis: 10%;
+    }
+  }
+}
+.data-head{
+  padding: 15px;
+  div{
+    flex-basis: 15%;
+    display: flex;
+    justify-content: center;
+    &:first-child{
+      flex-basis: 25%;
+      justify-content: flex-start;
+    }
+    &:last-child{
+      flex-basis: 10%;
+     
+    }
+  }
+}

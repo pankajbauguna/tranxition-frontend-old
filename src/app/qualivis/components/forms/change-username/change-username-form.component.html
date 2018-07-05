@@ -1,0 +1,37 @@
+<div class="center-form">
+  <form  action="submit" [formGroup]='changeUsernameForm' (ngSubmit)="changeUsername(changeUsernameForm.value)"  class="form-signin ">
+    <alert type="danger" *ngIf="errorMsg && errorMsg.length">
+      {{errorMsg}}
+    </alert>
+    <alert type="success" *ngIf="successMsg && successMsg.length">
+      <p [innerHTML]=successMsg></p>
+    </alert>
+    <p class="change-username-attention"><span>Attention!</span> Changing the current user email registered for this account will deactivate access and assign account access to the new user email.</p>
+  
+    <div class="form-group">
+      <label for="currentUserEmail" class="sr-only">Email</label>
+      <input type="text" readonly="" id="currentUserEmail" class="form-control" placeholder="Email" [value]=currentEmail autofocus>
+    </div>
+
+    <div class="form-group">
+      <label for="newUserEmail" class="sr-only">Email</label>
+      <input type="email" id="newUserEmail" class="form-control" placeholder="Enter New Email" [formControl]="changeUsernameForm.controls['new_email']" autofocus>
+      <p class="error-msg" *ngIf="!changeUsernameForm.controls['new_email'].pristine && changeUsernameForm.controls['new_email'].touched && changeUsernameForm.controls['new_email'].hasError('required')">{{messages['EMAIL_REQ']}}</p>
+      <p *ngIf="changeUsernameForm.controls['new_email'].touched && changeUsernameForm.controls['new_email'].hasError('invalidFormat') && !changeUsernameForm.controls['new_email'].hasError('required') && !changeUsernameForm.controls['new_email'].pristine" class="error-msg">{{messages['EMAIL_INVALID_FORMAT']}}</p>
+    </div>
+
+    <div class="form-group">
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Enter Current Password" [formControl]="changeUsernameForm.controls['password']">
+      <p *ngIf="changeUsernameForm.controls['password'].touched && !changeUsernameForm.controls['password'].pristine && changeUsernameForm.controls['password'].hasError('required')" class="error-msg"> {{messages['SIGNUP_PASSWORD_REQUIRED']}} </p>
+      <p *ngIf="changeUsernameForm.controls['password'].touched && !changeUsernameForm.controls['password'].pristine && changeUsernameForm.controls['password'].hasError('invalidFormat') && !changeUsernameForm.controls['password'].hasError('required')" class="error-msg"> {{messages['PASSWORD_INVALID_FORMAT']}} </p>
+    </div>
+    <div class="form-group change-username-accept-term">
+      <div class="checkbox check-small">
+        <input type="checkbox" class="filled-in" required [formControl]="changeUsernameForm.controls['accept_terms']"  id="acceptTerm">
+        <label class="ml-0" for="acceptTerm">I understand that changing the username email will re-assign account access to a different email and deactivate the current email and password registered with this account.</label>
+      </div>
+    </div>
+    <button class="btn btn-primary" [disabled]="!changeUsernameForm.valid" type="submit">Submit</button>
+  </form>
+</div>

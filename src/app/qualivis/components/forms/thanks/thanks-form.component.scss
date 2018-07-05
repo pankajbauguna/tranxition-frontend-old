@@ -1,0 +1,30 @@
+@import "../contact-info/contact-info-form.component.scss";
+
+.review{
+	section{
+		padding-bottom: 1rem;
+
+		.main-head{
+			border-top: 1px solid lighten($gray, 50);
+			border-bottom: 1px solid lighten($gray, 50);
+			margin: 0 0 1.5rem;
+			padding: 1rem 0;
+			a{
+				font-size: 16px;
+				line-height: 1.2;
+				margin-left: 10rem;
+				fa {
+					margin-left: 3px;
+				}
+			}
+		}
+	}
+	h4{
+		font-family: 'source_sans_probold';
+	}
+	p{
+		font-family: 'source_sans_prolight';
+		font-size: $sub-sub-heading-font;
+		margin-bottom: 0.125rem;
+	}
+}

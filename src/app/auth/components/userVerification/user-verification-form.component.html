@@ -1,0 +1,22 @@
+<div class="center-login" *ngIf="isServerResonse">
+  <div class="form-signin">
+    <img [src]="appLogo" alt="Logo" class="logo">
+    <alert type="danger" *ngIf="errorMsg && errorMsg.length">
+      {{errorMsg}}
+    </alert>
+    <alert type="success" *ngIf="succesMsg && succesMsg.length">
+       <p [innerHTML]=succesMsg></p>
+    </alert>
+   
+    <p class="font-small text-center">Return to <a href="javascript:void(0);" (click)="redirectTo('login')" class="color-green">Sign in.</a> </p>
+  </div>
+</div>
+
+<div class="center-login" *ngIf="ifAlreadyLoggedIn">
+	<div class="form-signin">
+    <img [src]="appLogo" alt="Logo" class="logo">
+    <alert type="danger">
+      	You have already logged in with someother users. Please logout first.
+    </alert>
+    <p class="font-small text-center">Return to <a href="javascript:void(0);" (click)="redirectTo('contact-info')" class="color-green">Application.</a> </p>
+</div>

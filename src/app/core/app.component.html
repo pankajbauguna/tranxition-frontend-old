@@ -1,0 +1,12 @@
+<block-ui [template]="blockTemplate">
+    <router-outlet></router-outlet>
+</block-ui>
+
+<ng-template #blockTemplate>
+    <div class="block-ui-template">
+        <div class="logo"></div>
+        <svg class="spinner" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="10" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+</ng-template>

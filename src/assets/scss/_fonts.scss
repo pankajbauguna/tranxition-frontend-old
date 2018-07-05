@@ -1,0 +1,72 @@
+$font-path: "/assets/fonts";
+@font-face {
+  font-family: 'source_sans_proextralight';
+  src: url('#{$font-path}/sourcesanspro-extralight-webfont.woff2') format('woff2'),
+  url('#{$font-path}/sourcesanspro-extralight-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'source_sans_prolight';
+  src: url('#{$font-path}/sourcesanspro-light-webfont.woff2') format('woff2'),
+  url('#{$font-path}/sourcesanspro-light-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'source_sans_proregular';
+  src: url('#{$font-path}/sourcesanspro-regular-webfont.woff2') format('woff2'),
+  url('#{$font-path}/sourcesanspro-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'source_sans_prosemibold';
+  src: url('#{$font-path}/sourcesanspro-semibold-webfont.woff2') format('woff2'),
+  url('#{$font-path}/sourcesanspro-semibold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'source_sans_probold';
+  src: url('#{$font-path}/sourcesanspro-bold-webfont.woff2') format('woff2'),
+  url('#{$font-path}/sourcesanspro-bold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'lato-bold';
+  src: url('#{$font-path}/Lato-Bold.eot');
+  /* IE9 Compat Modes */
+  src: url('#{$font-path}/Lato-Bold.eot?#iefix') format('embedded-opentype'),
+  /* IE6-IE8 */
+  url('#{$font-path}/Lato-Bold.woff2') format('woff2'),
+  /* Modern Browsers */
+  url('#{$font-path}/Lato-Bold.woff') format('woff'),
+  /* Modern Browsers */
+  url('#{$font-path}/Lato-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}
+
+@font-face {
+  font-family: 'lato-regular';
+  src: url('#{$font-path}/Lato-Regular.eot');
+  /* IE9 Compat Modes */
+  src: url('#{$font-path}/Lato-Regular.eot?#iefix') format('embedded-opentype'),
+  /* IE6-IE8 */
+  url('#{$font-path}/Lato-Regular.woff2') format('woff2'),
+  /* Modern Browsers */
+  url('#{$font-path}/Lato-Regular.woff') format('woff'),
+  /* Modern Browsers */
+  url('#{$font-path}/Lato-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}

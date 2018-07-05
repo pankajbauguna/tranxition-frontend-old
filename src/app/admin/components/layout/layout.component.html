@@ -1,0 +1,33 @@
+<app-header [role]="role" [userName]="userName"></app-header>
+<div class="container-fluid fixed-sub-header">
+	<div class="container">
+		<div class="row btn-tab">
+			<div class="col-12 pb-2 mt-3" *ngIf="pathName !== routes['application-reset'] && pathName !== routes['adminUsers']">
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName == routes.dashboard}" (click)="redirectTo(routes.dashboard)">
+					Dashboard
+				</button>
+				<button type="button" class="btn btn-outline" [ngClass]="{'active': pathName == routes.applications}" (click)="redirectTo(routes.applications)">
+					Applications
+				</button>
+			</div>
+			<div class="main-head col-12 mt-1" *ngIf="pathName == routes.applications">
+				<div class="grey-bottom-border pb-1">Application |
+					<span class="active">Submitted</span>
+				</div>
+			</div>
+			<div class="main-head col-12 mt-1" *ngIf="pathName == routes['application-reset']">
+				<div class="grey-bottom-border pb-1">Application |
+					<span class="active">Reset</span>
+				</div>
+			</div>
+			<div class="main-head col-12 mt-1" *ngIf="pathName == routes['adminUsers']">
+				<div class="grey-bottom-border pb-1">Admin
+					<span class="active">Listings</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="main-content-area container">
+	<router-outlet></router-outlet>
+</div>
